@@ -10,14 +10,14 @@ _1 TILs and counting..._
 
 ### 1 most recent TILs
 
-- [Test1](test/test.md) - Sun Mar 13 16:20:30 2022 +0900
+- [JPA](JPA/220313_220314_JPA.md) - Mon Mar 14 00:09:04 2022 +0900
 
 ### Categories
 
-- [test](#test)
+- [JPA](#JPA)
 
-### [test](#test)
-- [Test1](test/test.md)
+### [JPA](#JPA)
+- [JPA](JPA/220313_220314_JPA.md)
 
 [1]: https://github.com/YooHayoung/TIL
 
