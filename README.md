@@ -4,20 +4,25 @@
 Yoo Hayoung's [TIL collection][1].
 
 
-_1 TILs and counting..._
+_2 TILs and counting..._
 
 ---
 
-### 1 most recent TILs
+### 2 most recent TILs
 
+- [Spring Data JPA](SpringDataJPA/220314_SpringDataJPA.md) - Mon Mar 14 11:46:31 2022 +0900
 - [JPA](JPA/220313_220314_JPA.md) - Mon Mar 14 00:09:04 2022 +0900
 
 ### Categories
 
 - [JPA](#JPA)
+- [SpringDataJPA](#SpringDataJPA)
 
 ### [JPA](#JPA)
 - [JPA](JPA/220313_220314_JPA.md)
+
+### [SpringDataJPA](#SpringDataJPA)
+- [Spring Data JPA](SpringDataJPA/220314_SpringDataJPA.md)
 
 [1]: https://github.com/YooHayoung/TIL
 
