@@ -4,15 +4,15 @@
 Yoo Hayoung's [TIL collection][1].
 
 
-_6 TILs and counting..._
+_15 TILs and counting..._
 
 ---
 
 ### 3 most recent TILs
 
-- [Querydsl 기본 문법](Querydsl/Querydsl 기본 문법.md) - Thu Mar 17 12:34:23 2022 +0900
-- [Querydsl 설정](Querydsl/Querydsl 설정.md) - Thu Mar 17 12:34:23 2022 +0900
-- [스프링 부트와 AWS로 혼자 구현하는 웹 서비스](도서/스프링 부트와 AWS로 혼자 구현하는 웹 서비스.md) - Thu Mar 17 12:34:23 2022 +0900
+- [영속성 컨텍스트](JPA/영속성_컨텍스트.md) - Sat Mar 19 01:35:41 2022 +0900
+- [프록시](JPA/프록시.md) - Sat Mar 19 01:35:41 2022 +0900
+- [Entity Mapping](JPA/Entity_Mapping.md) - Sat Mar 19 01:35:41 2022 +0900
 
 ### Categories
 
@@ -27,6 +27,15 @@ _6 TILs and counting..._
 
 ### [JPA](#JPA)
 - [JPA](JPA/220313_220314_JPA.md)
+- [Entity Mapping](JPA/Entity_Mapping.md)
+- [JPA 구동 방식](JPA/JPA_구동방식.md)
+- [JPA란?](JPA/JPA란.md)
+- [값 타입](JPA/값타입.md)
+- [상속 관계](JPA/상속관계.md)
+- [연관관계](JPA/연관관계.md)
+- [영속성 전이 CASCADE](JPA/영속성_전이와_고아_객체.md)
+- [영속성 컨텍스트](JPA/영속성_컨텍스트.md)
+- [프록시](JPA/프록시.md)
 
 ### [Querydsl](#Querydsl)
 - [Querydsl 기본 문법](Querydsl/Querydsl 기본 문법.md)
