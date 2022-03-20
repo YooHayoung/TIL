@@ -80,6 +80,8 @@ Member findMember = queryFactory
 - `fetchResults()` : 페이징 정보 포함, total count 쿼리 추가 실행
   - 복잡하고 성능이 중요한 페이징 쿼리는 얘를 쓰지 말고, 쿼리 두 개를 따로 날려야 한다.
 - `fetchCount()` : count쿼리로 변경해서 count 수 조회
+- `fetchResults()`, `fetchCount()` 향후 미지원.
+- count 쿼리가 필요하면 별도로 작성하자
 
 ## 정렬
 - `desc()` : 내림차순
@@ -102,6 +104,7 @@ queryFactory
    .offset(1) // 0부터 시작
    .limit(2) // 최대 조회 건수
    .fetch();
+   //fetchResults(); // 내용과 전체 카운트 한번에 조회 - 미지원 예정
 ```
 > count 쿼리에 조인이 필요없는 성능 최적화가 필요하면 count 전용 쿼리를 별도로 작성하자.
 
