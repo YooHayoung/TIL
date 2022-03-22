@@ -375,7 +375,7 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
   - JPA 주요 이벤트 어노테이션은 `@PrePersist`, `@PostPersist`, `@PreUpdate`, `@PostUpdate`가 있다.
 
 ### 스프링 데이터 JPA를 이용하면
-- 스프링부트 설정 클래스에 `WEnableJpaAuditing`을 적용한다.
+- 스프링부트 설정 클래스에 `@EnableJpaAuditing`을 적용한다.
 - 엔티티에 `@EntityListeners(AuditingEntityListener.class)`를 적용한다.
 - 컬럼에 `@CreatedDate`, `@LastModifiedDate`, `@CreatedBy`, `@LastModifiedBy`를 사용한다.
 - 등록자 수정자를 처리해주는 `AuditorAware`를 스프링 빈으로 등록한다.
