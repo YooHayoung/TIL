@@ -4,18 +4,19 @@
 Yoo Hayoung's [TIL collection][1].
 
 
-_22 TILs and counting..._
+_23 TILs and counting..._
 
 ---
 
 ### 3 most recent TILs
 
+- [AWS 배포하기](ETC/AWS_배포하기.md) - Wed May 25 13:59:40 2022 +0900
 - [예외 처리](SpringMVC/예외_처리.md) - Tue May 24 11:46:14 2022 +0900
-- [로그인 처리](SpringMVC/로그인_처리.md) - Mon May 23 01:16:38 2022 +0900
 - [ArgumentResolver](SpringMVC/ArgumentResolver.md) - Mon May 23 01:16:38 2022 +0900
 
 ### Categories
 
+- [ETC](#ETC)
 - [JAVA](#JAVA)
 - [JPA](#JPA)
 - [Querydsl](#Querydsl)
@@ -23,6 +24,9 @@ _22 TILs and counting..._
 - [SpringMVC](#SpringMVC)
 - [도서](#도서)
 - [정리할것](#정리할것)
+
+### [ETC](#ETC)
+- [AWS 배포하기](ETC/AWS_배포하기.md)
 
 ### [JAVA](#JAVA)
 - [JAVA](JAVA/JAVA.md)
