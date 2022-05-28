@@ -4,15 +4,15 @@
 Yoo Hayoung's [TIL collection][1].
 
 
-_23 TILs and counting..._
+_25 TILs and counting..._
 
 ---
 
 ### 3 most recent TILs
 
+- [스프링 핵심](Spring/스프링 핵심.md) - Sat May 28 13:32:34 2022 +0900
+- [스프링 빈](Spring/스프링 빈.md) - Sat May 28 13:32:34 2022 +0900
 - [AWS 배포하기](ETC/AWS_배포하기.md) - Wed May 25 13:59:40 2022 +0900
-- [예외 처리](SpringMVC/예외_처리.md) - Tue May 24 11:46:14 2022 +0900
-- [ArgumentResolver](SpringMVC/ArgumentResolver.md) - Mon May 23 01:16:38 2022 +0900
 
 ### Categories
 
@@ -20,6 +20,7 @@ _23 TILs and counting..._
 - [JAVA](#JAVA)
 - [JPA](#JPA)
 - [Querydsl](#Querydsl)
+- [Spring](#Spring)
 - [SpringDataJPA](#SpringDataJPA)
 - [SpringMVC](#SpringMVC)
 - [도서](#도서)
@@ -47,6 +48,10 @@ _23 TILs and counting..._
 - [Querydsl 기본 문법](Querydsl/Querydsl_기본_문법.md)
 - [Querydsl 설정](Querydsl/Querydsl_설정.md)
 - [Querydls 중급 문법](Querydsl/Querydsl_중급_문법.md)
+
+### [Spring](#Spring)
+- [스프링 빈](Spring/스프링 빈.md)
+- [스프링 핵심](Spring/스프링 핵심.md)
 
 ### [SpringDataJPA](#SpringDataJPA)
 - [Spring Data JPA](SpringDataJPA/SpringDataJPA.md)
