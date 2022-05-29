@@ -10,9 +10,9 @@ _28 TILs and counting..._
 
 ### 3 most recent TILs
 
-- [로그](Study/로그.md) - Sun May 29 13:09:10 2022 +0900
-- [스프링 핵심](Spring 기초/스프링_핵심.md) - Sun May 29 13:09:10 2022 +0900
-- [스프링 빈](Spring 기초/스프링_빈.md) - Sun May 29 13:09:10 2022 +0900
+- [스프링 핵심](Spring-기초/스프링_핵심.md) - Sun May 29 18:35:08 2022 +0900
+- [스프링 빈](Spring-기초/스프링_빈.md) - Sun May 29 18:35:08 2022 +0900
+- [스프링 Web MVC](Spring-기초/스프링_WEB_MVC.md) - Sun May 29 18:35:08 2022 +0900
 
 ### Categories
 
@@ -20,7 +20,7 @@ _28 TILs and counting..._
 - [JAVA](#JAVA)
 - [JPA](#JPA)
 - [Querydsl](#Querydsl)
-- [Spring 기초](#Spring 기초)
+- [Spring-기초](#Spring-기초)
 - [SpringDataJPA](#SpringDataJPA)
 - [SpringMVC](#SpringMVC)
 - [Study](#Study)
@@ -50,10 +50,10 @@ _28 TILs and counting..._
 - [Querydsl 설정](Querydsl/Querydsl_설정.md)
 - [Querydls 중급 문법](Querydsl/Querydsl_중급_문법.md)
 
-### [Spring 기초](#Spring 기초)
-- [스프링 Web MVC](Spring 기초/스프링_WEB_MVC.md)
-- [스프링 빈](Spring 기초/스프링_빈.md)
-- [스프링 핵심](Spring 기초/스프링_핵심.md)
+### [Spring-기초](#Spring-기초)
+- [스프링 Web MVC](Spring-기초/스프링_WEB_MVC.md)
+- [스프링 빈](Spring-기초/스프링_빈.md)
+- [스프링 핵심](Spring-기초/스프링_핵심.md)
 
 ### [SpringDataJPA](#SpringDataJPA)
 - [Spring Data JPA](SpringDataJPA/SpringDataJPA.md)
