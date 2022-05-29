@@ -253,7 +253,7 @@
 
 ### 체크 박스
 - HTML에서 체크 박스를 선택하지 않고 폼 전송시 해당 필드 자체가 전송되지 않는다. 서버에서 로그를 남겨보면 `null`로 표시됨.
-- 이를 해결하여 `false`로 전송하기 위해서는 `<input type="hidden" name="_name"/>` 필드를 전송하면 스프링에서는 체크를 해제했다고 판단하고 false로 처리한다.
+- 이를 해결하여 `false`로 전송하기 위해서는 `<input type="hidden" name="_fieldName"/>` 필드를 전송하면 스프링에서는 체크를 해제했다고 판단하고 false로 처리한다.
 - `th:field`를 이용하면 타임리프는 자동으로 체크박스의 히든 필드를 생성해준다.
 ```html
 <form action="item.html" th:action th:object="${item}" method="post">
@@ -309,10 +309,10 @@ hello.name=안녕 {0}
 
 
 
-#Thymleaf
-#Thymleaf/문법#
-#Thymleaf/스프링 통합#
-#Thymleaf/메시지
-#Thymleaf/국제화
+#스프링 MVC/Thymleaf#
+#스프링 MVC/Thymleaf/문법#
+#스프링 MVC/Thymleaf/스프링 통합#
+#스프링 MVC/Thymleaf/메시지#
+#스프링 MVC/Thymleaf/국제화#
 ---
 해당 내용은 김영한님의 강의를 듣고 정리한 내용입니다.

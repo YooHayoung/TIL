@@ -138,18 +138,18 @@ public class ItemValidator implements Validator {
 ### DefaulteMessageCodesResolver의 기본 메시지 생성 규칙
 
 객체 오류의 경우 다음 순서로 2가지를 생성한다
-> 1 -> code + “.” + objectName  
-> 2 -> code  
+> 1 -> code + “.” + objectName
+> 2 -> code
 
 필드 오류의 경우 다음 순서로 4가지 메시지 코드 생성한다
-> 1 -> code.objectName.fieldName  
-> 2 -> code.fieldName  
-> 3 -> code.fieldType  
-> 4 -> code  
+> 1 -> code.objectName.fieldName
+> 2 -> code.fieldName
+> 3 -> code.fieldType
+> 4 -> code
 
 
 
-- - - -
+---
 ## Bean Validation
 - 공식 사이트: http://hibernate.org/validator/
 - 공식 메뉴얼: https://docs.jboss.org/hibernate/validator/6.2/reference/en-US/html_single/ 
@@ -255,9 +255,9 @@ API 경우 3가지 경우를 나누어 생각해야 한다.
 `HttpMessageConverter` 단계에서 실패하면 예외가 발생한다. -> 예외 처리 필요
 
 
-#Validation
-#Validation/errorMessage
-#Validation/BindingResult
-#Validation/BeanValidation
-- - - -
+#스프링 MVC/Validation#
+#스프링 MVC/Validation/errorMessage#
+#스프링 MVC/Validation/BindingResult#
+#스프링 MVC/Validation/BeanValidation#
+---
 해당 내용은 김영한님의 강의를 듣고 정리한 내용입니다.
