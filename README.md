@@ -4,15 +4,15 @@
 Yoo Hayoung's [TIL collection][1].
 
 
-_28 TILs and counting..._
+_29 TILs and counting..._
 
 ---
 
 ### 3 most recent TILs
 
+- [API 예외 처리](SpringMVC/API_예외_처리.md) - Mon May 30 22:50:21 2022 +0900
 - [스프링 핵심](Spring-기초/스프링_핵심.md) - Sun May 29 18:35:08 2022 +0900
 - [스프링 빈](Spring-기초/스프링_빈.md) - Sun May 29 18:35:08 2022 +0900
-- [스프링 Web MVC](Spring-기초/스프링_WEB_MVC.md) - Sun May 29 18:35:08 2022 +0900
 
 ### Categories
 
@@ -59,6 +59,7 @@ _28 TILs and counting..._
 - [Spring Data JPA](SpringDataJPA/SpringDataJPA.md)
 
 ### [SpringMVC](#SpringMVC)
+- [API 예외 처리](SpringMVC/API_예외_처리.md)
 - [ArgumentResolver](SpringMVC/ArgumentResolver.md)
 - [타임리프](SpringMVC/Thymeleaf.md)
 - [Validation](SpringMVC/Validation.md)
