@@ -10,9 +10,9 @@ _29 TILs and counting..._
 
 ### 3 most recent TILs
 
+- [스프링 타입 컨버터](SpringMVC/스프링_타입_컨버터.md) - Thu Jun 23 13:34:37 2022 +0900
 - [API 예외 처리](SpringMVC/API_예외_처리.md) - Mon May 30 22:50:21 2022 +0900
-- [스프링 핵심](Spring-기초/스프링_핵심.md) - Sun May 29 18:35:08 2022 +0900
-- [스프링 빈](Spring-기초/스프링_빈.md) - Sun May 29 18:35:08 2022 +0900
+- [스프링 Web MVC](Spring-기초/스프링_WEB_MVC.md) - Sun May 29 18:35:08 2022 +0900
 
 ### Categories
 
@@ -24,7 +24,6 @@ _29 TILs and counting..._
 - [SpringDataJPA](#SpringDataJPA)
 - [SpringMVC](#SpringMVC)
 - [Study](#Study)
-- [도서](#도서)
 - [정리할것](#정리할것)
 
 ### [ETC](#ETC)
@@ -64,14 +63,12 @@ _29 TILs and counting..._
 - [타임리프](SpringMVC/Thymeleaf.md)
 - [Validation](SpringMVC/Validation.md)
 - [로그인 처리](SpringMVC/로그인_처리.md)
+- [스프링 타입 컨버터](SpringMVC/스프링_타입_컨버터.md)
 - [예외 처리](SpringMVC/예외_처리.md)
 
 ### [Study](#Study)
 - [스프링 공부 내용 요약](Study/Spring_MVC_내용_요약.md)
 - [로그](Study/로그.md)
-
-### [도서](#도서)
-- [스프링 부트와 AWS로 혼자 구현하는 웹 서비스](도서/스프링_부트와_AWS로_혼자_구현하는_웹_서비스.md)
 
 ### [정리할것](#정리할것)
 - [temp](정리할것/Learned.md)
