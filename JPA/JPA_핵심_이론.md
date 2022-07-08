@@ -1,0 +1,480 @@
+# JPA 핵심 이론
+[1. JPA와 ORM](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=JPA%EC%99%80%20ORM)
+[2. 영속성 컨텍스트](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=%EC%98%81%EC%86%8D%EC%84%B1%20%EC%BB%A8%ED%85%8D%EC%8A%A4%ED%8A%B8)
+[3. Entity Mapping](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=Entity%20Mapping)
+[4. 연관관계](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=%EC%97%B0%EA%B4%80%EA%B4%80%EA%B3%84)
+[5. 프록시](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=%ED%94%84%EB%A1%9D%EC%8B%9C)
+[6. 상속 관계](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=%EC%83%81%EC%86%8D%20%EA%B4%80%EA%B3%84)
+[7. 값 타입](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=%EA%B0%92%20%ED%83%80%EC%9E%85)
+[8. 영속성 전이](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=%EC%98%81%EC%86%8D%EC%84%B1%20%EC%A0%84%EC%9D%B4)
+[9. 고아 객체](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=%EA%B3%A0%EC%95%84%20%EA%B0%9D%EC%B2%B4)
+[10. JPQL](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=JPQL)
+[11. Fetch Join](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=Fetch%20Join)
+[12. 기타 설정](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=%EA%B8%B0%ED%83%80%20%EC%84%A4%EC%A0%95)
+
+
+
+- - - -
+## JPA와 ORM
+`JPA`는 `Java Persistence API`의 약자로 자바 진영의 ORM 기술 표준을 말한다. 
+`ORM`은 `Object-relational mapping`의 약자로 객체 관계 매핑 기술이다. 객체지향과 RDB에서 객체를 바라보는 관점은 차이가 있다. 때문에 객체를 RDB에 맞추어 설계하게되면 객체지향에서 의미하는 객체를 설계할 수 없다. 이러한 패러다임 차이를 극복하도록 도와주는 것이 `ORM`이다. `JPA`는 `ORM` 프레임워크 중 하나로 객체와 RDB 테이블을 매핑해주는 역할을 한다.
+`JPA`는 표준 명세로 단지 인터페이스의 모음이다. 이를 사용하려면 해당 인터페이스를 구현한 구현체가 필요하다. JPA의 구현체로 `Hibernate`, `EclipseLink`, `DataNucleus` 등이 있다.
+
+### JPA의 장점
+- SQL 중심 개발에서 벗어나 객체 중심으로 개발할 수 있다.
+- 패러다임 불일치가 해결된다.
+- 생산성이 증가된다.
+	- 기본적인 SQL 쿼리는 JPA에서 기본으로 제공한다. 반복적으로 작성되는 SQL 쿼리들을 작성하지 않아도 되기 때문에 생산성이 증가될 수 있다.
+- 유지보수가 좋다.
+- 높은 성능을 가진다.
+- 데이터 접근 추상화와 벤더 독립성
+	- 벤더는 생산 회사를 말하는데 각 DB마다 명령을 처리하는 방법이 다를 수 있다. 하지만 인터페이스인 JPA를 통해 기능을 구현하면 데이터베이스를 변경하여도 정상적으로 동작한다. 이를 벤더 독립성이라고 한다.
+
+### JPA 구동 방식
+1. `Persistence`에서 설정 정보 조회
+2. 이를 기반으로 `EntityManagerFactory` 생성
+	- `EntityManagerFactory`는 1개만 생성하여 `애플리케이션이 공유`한다.
+3. EntityManagerFactory가 `EntityManager` 생성.  `EntityManager`는 Factory에서 `Session마다 생성`하여 **사용하고 버린다.** 
+	* 쓰레드마다 공유 X
+4. JPA의 모든 데이터 변경은 트랜잭션 안에서 실행된다.
+
+
+
+
+## 영속성 컨텍스트
+영속성 컨텍스트는 **엔티티를 영구 저장하는 환경**을 말한다. 이는 JPA를 이해하는데 있어서 가장 중요한 논리적인 개념이다. `EntityManager`를 통해 영속성 컨텍스트에 접근하여 엔티티의 상태를 관리할 수 있다. `J2SE` 환경에서는 `EntityManager`와 영속성 컨텍스트가 **1:1** 이다. `J2EE`, `Spring Framework` 같은 `Container 환경`에서는 `EntityManager`와 영속성 컨텍스트가 **N:1** 임
+
+
+### 엔티티의 생명주기
+`EntityManager`를 통해 영속성 컨텍스트에 접근하여 엔티티의 상태를 관리할 수 있다고 하였다. 엔티티의 상태는 영속성 컨텍스트와 연관되어 다음과 같이 나타낼 수 있다.
+	- 비영속 상태 : 영속성 컨텍스트와 엔티티가 전혀 관계가 없는 새로운 상태를 말한다.
+	- 영속 상태 : 영속성 컨텍스트에 엔티티를 저장하면 엔티티는 영속 상태가 된다. 이제 해당 엔티티는 영속성 컨텍스트에 의해 정보가 관리된다.
+	- 준영속 상태 : 영속성 컨텍스트에 저장된 엔티티를 분리하여 영속성 컨텍스트와의 관계를 끊는다. 이제 해당 엔티티는 더 이상 영속성 컨텍스트에 의해 관리되지 않는다.
+	- 삭제 : 해당 엔티티가 삭제된 상태를 말한다.
+
+
+### 변경감지와 병합
+엔티티의 수정 방법에는 2가지가 있다.
+	- 변경 감지(Dirty checking) : 영속성 컨텍스트에서 엔티티를 조회 후, 데이터 수정 -> 트랜잭션 내에서 조회, 변경 -> 트랜잭션 커밋 시점에 변경 감지 동작 후, DB에 UPDATE 실행
+	- 병합(merge) : 준영속 엔티티를 영속 상태로 변경. 1차 캐시에서 엔티티 조회 -> 없으면 DB에서 엔티티 조회 후 1차 캐시에 저장 -> 조회한 영속 상태 엔티티의 모든 필드의 값을 merge 하려는 엔티티의 값으로 변경(값이 없으면  null)로 업데이트.
+일반적으로 트랜잭션이 있는 서비스 계층에서 엔티티를 생성하고 변경 감지를 이용하여 변경하도록 하는 것이 좋다. 예기치 못한 오류가 발생하는 것을 방지해주기 때문이다.
+
+
+### 영속성 컨텍스트의 장점
+영속성 컨텍스트 개념을 이용하면 다음과 같은 장점을 얻을 수 있다.
+	1. 영속성 컨텍스트는 1차 캐시 역할을 한다.
+		- 엔티티를 영속화하거나 DB에 저장된 엔티티를 불러오면 해당 엔티티를 1차 캐시에 저장해둔다. 이 후, 해당 엔티티가 필요하면 DB에 바로 쿼리를 전송하는 것이 아니라 1차 캐시인 영속성 컨텍스트에서 먼저 확인 후, 해당 엔티티가 존재하면 쿼리를 전송하지 않고 영속성 컨텍스트에서 가져온다. 영속성 컨텍스트에 없다면 DB에 쿼리를 전송하고 원하는 데이터를 가져온다.
+		- 이전에 사용한 데이터가 필요하면 쿼리를 전송하지 않고도 해당 데이터를 불러올 수 있다. 따라서 네트워크 트래픽이 감소하고 성능이 좋아진다.
+	2. 동일성(identity) 보장
+		- 1차 캐시로 `REPEATABLE READ` 등급의 트랜잭션 격리 수준을 DB가 아니라 애플리케이션 차원에서 제공한다. 
+		- 1차 캐시에서 가져온 엔티티는 동일한 엔티티임을 보장한다. 같은 참조를 가지기 때문에 `==` 비교가 성립한다.
+	3. 트랜잭션을 지원하는 쓰기 지연
+		- 엔티티가 영속성 컨텍스트에 영속화 될 때 DB에 쿼리를 전송하는 것이 아니라 트랜잭션이 종료될 때(commit 시점) 쿼리를 전송하여 DB에 저장하도록 한다.
+	4. Dirty Checking
+		- 트랜잭션 내에서 영속 상태의 엔티티를 수정하면, 트랜잭션이 끝나는 커밋 시점에 1차 캐시에서의 스냅샷과 비교한다. 비교 결과가 다르면 DB에 수정 쿼리를 전송하여 데이터를 변경한다.
+	5. Lazy Loading
+		- DB에서 엔티티를 검색하여 가져올 때, 연관된 엔티티도 함께 가져올 수 있다. 이 때, 당장 사용하지 않을 엔티티가 포함되어 있을 수 있다. DB에 이를 모두 검색하는 쿼리를 전송하는 것은 낭비이다. 이를 최적화하기 위해 지연로딩 개념을 이용하여 연관된 엔티티가 함께 조회되는 것을 미루도록 한다.
+
+
+
+
+
+## Entity Mapping
+객체 엔티티와 DB의 테이블을 매핑하는 것을 말한다. JPA가 관리할 클래스에 `@Entity` 애노테이션을 붙이면 해당 클래스의 객체는 영속화시에 영속성 컨텍스트에 의하여 관리된다. JPA를 사용하여 테이블과 매핑할 클래스는 `@Entity`  애노테이션을 필수로 붙여야 한다.
+
+
+### 주의사항
+	- JPA 스펙상, 엔티티로 관리될 클래스는 `public` 또는 `protected` 기본 생성자를 필요로 한다.
+	- `final` 클래스, `enum`, `interface`, `inner` 클래스는 엔티티로 사용할 수 없다.
+	- 엔티티의 필드에 `final` 키워드를 사용할 수 없다.
+
+
+### 주요 매핑 어노테이션
+	* `@Column` : 컬럼 매핑
+	* `@Temporal` : 날짜 타입 매핑 (요즘엔 `LocalDateTime`을 사용해서 잘 안쓴다)
+	* `@Enumerated` : `enum` 타입 매핑
+		* `value` 속성에 `ORDINAL`이 아닌 `STRING`을 사용하자. `ORDINAL` 사용하면 `enum`값이 변경될 시에 순서가 변경될 우려가 있다.
+	* `@Lob` : BLOB, CLOB 매핑
+	* `@Transient` : 특정 필드를 컬럼에 매핑하지 않는다.
+
+
+
+
+
+## 연관관계
+연관관계란 RDB 테이블의 외래키를 객체의 참조와 매핑하는 것을 말한다.
+RDB의 테이블은 외래키로 조인을 하여 상호 연관된 테이블을 찾는다. 하지만 객체는 참조를 통해 연관된 객체를 찾는다. 둘의 패러다임이 다르기 때문에 객체를 테이블에 맞추어 모델링하게 되면 외래키를 통해 연관된 객체의 식별자로 다시 조회하게 된다. 객체를 테이블에 맞추어 모델링하는 방식은 객체지향의 목표와 맞지 않다. 이러한 문제를 해결하기 위한 개념이 **연관관계 매핑**이다. 연관관계 매핑을 이용하면 참조를 통해 객체 그래프를 탐색할 수 있다.
+
+
+### 연관관계 종류
+단방향과 양방향이 있다.
+	- 단방향 : 한 방향으로만 객체 그래프를 탐색할수 있다. 한쪽 객체에만 참조를 둔다.
+	- 양방향 : 양 방향 모두 객체 그래프를 탐색할 수 있다. 양쪽 객체에 모두 참조를 둔다.
+
+```java
+// 양방향 예
+// ClassA .. ClassB -> * .. 1 양방향 관계이다.
+@Entity
+public class ClassA {
+	@Id @Column("classA_id")
+	private long id;
+	
+	@JoinColumn(name = "classB_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	private ClassB objectB;
+}
+
+@Entity
+public class ClassB {
+	@Id @Column("classB_id")
+	private long id;
+
+	@OneToMany(mappedBy = "objectB")
+	private List<ClassA> objectA;
+}
+```
+
+### 외래키 - 연관관계 주인
+RDB의 테이블은 외래키 하나로 두 테이블의 연관관계를 관리하지만 객체는 참조를 통해 연관관계를 관리한다. 단방향의 경우, 참조를 가진 쪽을 외래키로 지정하면 되지만 양방향의 경우에는 양쪽 객체에 모두 참조가 있다. 이 경우, 두 객체 중 하나를 연관관계의 주인을 설정하여 외래키를 관리할 수 있도록 한다. 
+
+#### 연관관계 주인 설정
+위 예시 코드를 보면 `ClassA`와 `ClassB`는 다대일(`* .. 1`)의 관계를 가진다. RDB는 이 관계에서 항상 `*`쪽에 외래키를 둔다. 외래키를 가지는 객체를 연관관계의 주인으로 지정하여 외래키를 관리할 수 있도록 해야 한다. 연관관계의 주인만이 등록, 수정이 가능하고 주인이 아닌 쪽은 읽기만 가능하도록 하는 것이다. 
+외래키를 가질 객체의 참조 필드에 `@JoinColumn(name = "대상 기본키 필드명")` 애노테이션을 붙이고 대상 객체에서 외래키로 사용할 기본키 필드명을 입력하면 연관관계 주인 설정이 완료된다. 연관관계의 주인이 아닌 대상 객체에는 필드에 `@-ToMany(mappedBy = "연관관계 주인 클래스의 매핑할 필드명")` 애노테이션을 사용하여 주인의 어느 필드와 매핑할지 지정해준다. 
+
+이렇게 설정한 양방향 연관관계를 이용할 때, 순수 객체의 상태를 고려한다면 항상 양쪽 객체 모두 값이 설정되어야 한다. 이 때, 연관관계 편의 메서드를 만들고 이를 이용한다면 어느 한쪽에 값 설정을 실수로 하지않아 문제가 발생하는 것을 예방할 수 있다.
+```java
+// Member의 Team을 설정함과 동시에 team의 members(Member List)에 해당 Member를 추가 -> 각각 호출하는 것 보다 실수할 확률 감소
+public void setTeam(Team team) {
+	this.team = team;
+	team.getMembers().add(this);
+}
+```
+
+
+
+
+
+## 프록시
+프록시 객체는 DB에 데이터 조회시 연관된 객체의 조회를 미루는 가짜 엔티티 객체이다. 프록시 객체는 실제 객체를 상속받아 실제 객체의 참조를 보관한다. 프록시 객체를 처음 사용하면 DB에 조회 쿼리를 전송하여 데이터를 가져온다. 프록시 객체는 이 때 한번만 초기화된다. 프록시 객체를 초기화한다고 실제 엔티티로 바뀌는 것은 아니다. 단지 프록시 객체가 가지는 실제 객체 참조를 통해 데이터를 초기화 할 뿐이다. 프록시 객체를 호출하면 프록시 객체는 실제 객체의 메서드를 호출한다. 또한 프록시 객체는 실제 엔티티를 상속받았기 때문에 타입 체크시 `instance of`를 사용하여 동일 객체인지 확인할 수 있다.
+
+
+### 프록시 설정
+`@ManyToOne`, `@OneToMany` 등 다중성 설정시, `fetch` 속성을 지정하여 프록시를 설정할 수 있다.
+	* 지연로딩 : `fetch=FetchType.LAZY` - 프록시 사용
+		* 해당 속성이 지정된 참조 객체는 프록시로 조회되어 프록시가 사용될 때까지 실제 엔티티 조회를 미룬다. `@-ToMany` 애노테이션은 기본값으로 지연로딩을 사용한다.
+	* 즉시로딩 : `fetch=FetchType.EAGER` - 프록시 미사용
+		* 객체 조회시 프록시로 가져오는 것이 아니라 실제 엔티티를 같이 가져온다. `@-ToOne` 애노테이션은 기본값으로 즉시 로딩을 사용한다.
+		* 즉시로딩은 JPQL에서 N + 1 문제를 발생시킨다. 이는 특정 엔티티 조회 쿼리 1번 + 연관된 엔티티를 조회하는 쿼리 N번, 즉, 클라이언트는 1개의 쿼리를 전송했으나 추가로 N개의 쿼리가 발생하는 문제를 말한다. 즉시로딩은 예상하지 못한 쿼리가 발생하기 때문에 사용하지 않는 것이 좋다.
+
+
+
+
+
+## 상속 관계
+객체에는 상속 관계가 있지만 RDB에는 상속 관계가 없다. DB 모델링 기법에서 슈퍼타입 서브타입 관계라는 모델링 기법이 객체 상속과 유사하다. 상속 관계 매핑은 객체의 상속과 구조를 DB의 슈퍼타입 서브타입 관계와 매핑하는 것을 말한다.
+
+상속 관계 매핑시 사용하는 주요 애노테이션은 다음과 같다.
+	- `@DiscriminatorColumn(name="DTYPE")` : 조상 클래스에 해당 애노테이션을 붙인다. name 속성에 매핑할 컬럼 명을 지정한다.
+	- `@DiscriminatorValue("XXX")` : 자손 클래스에 해당 애노테이션을 붙인다. 컬럼에 입력될 값을 지정한다.
+
+상속 관계 매핑에는 3가지 전략이 있다.
+조인 전략, 단일 테이블 전략, 구현 클래스마다 테이블 전략이 있다. 각각의 장단점을 파악하고 시스템에 따라 적절한 전략을 선택하도록 한다.
+
+
+### 조인 전략
+각각 테이블로 변환하여 조회시 조인하는 전략이다.
+`@Inheritance(strategy=InheritanceType.JOINED)` 애노테이션을 붙여 전략을 사용한다.
+	- 장점
+		- 테이블 정규화가 가능하다.
+		- 외래키 참조 무결성 제약조건을 활용할 수 있다.
+		- 저장 공간을 효율적으로 사용할 수 있다.
+	- 단점
+		- 조회 쿼리가 복잡하고 조회시 조인을 많이 사용하여 성능이 저하된다.
+		- 데이터 저장시 조상, 자손 테이블 각각 한 번씩 INSERT 쿼리가 발생한다.
+
+
+### 단일 테이블 전략
+통합 테이블로 변환한다.
+`@Inheritance(strategy=InheritanceType.SINGLE_TABLE)` 애노테이션을 붙여 전략을 사용한다.
+	- 장점
+		- 조인이 필요없다. 일반적으로 조회 성능이 빠르다.
+		- 쿼리가 단순하다.
+	- 단점
+		- 자식 엔티티가 매핑한 컬럼은 모두 `null`을 허용한다.
+		- 단일 테이블에 모든 것을 저장하기 때문에 테이블이 차지하는 용량이 커질 수 있다.
+		- 상황에 따라 조회성능이 오히려 느릴 수 있다.
+
+
+### 구현 클래스마다 테이블 전략
+서브타입 테이블로 변환한다.
+`@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)` 애노테이션을 붙여 전략을 사용한다.
+	- 장점
+		- 서브 타입을 명확하게 구분하여 처리할 때 효과적이다.
+		- `not null` 제약조건을 사용할 수 있다.
+	- 단점
+		- 여러 자식 테이블을 함께 조회할 때 `UNION`을 이용하기 때문에 성능이 느리다.
+		- 자식 테이블을 통합해서 쿼리하기 어렵다.
+
+
+### 단순 공통 매핑 정보가 필요할 때
+`@MappedSuperclass` 애노테이션을 이용한다.
+이는 상속 관계 매핑을 이용하는 것이 아니라 단순히 공통 매핑 정보가 필요할 때 사용한다. 보통 추상 클래스를 만들어 여기에 `@MappedSuperclass` 애노테이션을 붙여 사용한다. 추상 클래스로 사용하기 때문에 엔티티가 될 수 없으며 테이블과 매핑되지 않는다. 단지 이를 상속받는 자식 클래스에 매핑 정보만을 제공하는 것이다.
+
+
+
+
+
+## 값 타입
+JPA에서 사용하는 데이터 타입은 크게 2가지다. 엔티티 타입과 값 타입이다.
+**엔티티 타입**은 `@Entity` 애노테이션이 붙은 클래스의 객체를 말한다. 해당 객체는 데이터가 변해도 식별자를 통해 지속적으로 추적이 가능하다.
+반면 **값 타입**은 `int`, `Integer`, `String` 등 단순히 값으로만 사용하는 자바의 기본타입 또는 객체를 말한다. 값 타입은 식별자가 없고 값만 존재하기 때문에 변경시 추적이 불가능하다.
+
+값 타입은 다시 3가지로 분류할 수 있다. 값 타입에는 기본값 타입, 임베디드 타입, 컬렉션 타입이 있다.
+**기본값 타입**은 자바 기본 타입(`int`, `long`) 또는 래퍼 클래스(`Integer`, `Long`), `String` 등을 말한다.
+**임베디드 타입**은 기본 값 타입을 모아서 사용자가 직접 정의한 새로운 값 타입을 말한다.
+**컬렉션 타입**은 `List` 등의 타입을 말한다.
+
+
+### 임베디드 타입
+임베디드 타입은 기본 값 타입을 모아서 직접 정의한 새로운 값 타입을 말한다.
+```java
+@Embeddeable // 임베디드 타입 정의
+public class Address {
+	private String city;
+	private String street;
+	private int zipcode;
+}
+
+@Entity
+public class User {
+	@Id
+	private long id;
+
+	@Embedded // 임베디드 타입 사용
+	private Address address;
+}
+```
+
+위 예시 코드와 같이 임베디드 타입을 정의할 때에는 클래스에 `@Embeddeable` 애노테이션을 붙여 임베디드 타입을 선언한다. 이후 클래스 필드에 기본값 타입을 사용하여 임베디드 타입이 가질 필드를 정의한다.
+임베디드 타입을 정의한 후, 이를 사용하려면 사용할 필드에 `@Embedded` 애노테이션을 붙여 해당 타입이 임베디드 타입임을 알려준다. 
+임베디드 타입은 DB에 저장시 임베디드 타입의 객체 참조를 저장하는 것이 아니라 해당 객체의 속성 값들을 저장한다.
+임베디드 타입을 사용함으로써 해당 임베디드 타입 객체의 재사용성이 향상되고, 높은 응집도를 가질 수 있게 된다. 또한 해당 값 타입만 사용하는 의미있는 메서드를 생성할 수도 있다. 이것이 임베디드 타입 사용의 **장점**이다.
+
+### 값타입 주의
+임베디드 타입은 값 타입이지만 동시에 객체이다. 하나의 객체를 여러 다른 객체에서 공유해서 사용하면 위험하다. 객체 공유시 한쪽에서 객체의 상태를 변경하면 다른쪽에도 변경된 내용이 공유된다. 따라서 임베디드 타입 같은 값 타입의 객체들은 객체를 수정할 수 없도록 만들어서 부작용이 발생하지 않도록 해야한다. 값 타입의 객체는 불변 객체로 설계하고 해당 객체와 같은 내용의 객체가 필요한 경우, 객체를 공유하는 것이 아니라 값을 복사하여 사용하도록 해야한다.
+
+
+
+
+
+## 영속성 전이
+영속성 전이는 특정 엔티티를 영속 상태로 만들 때 해당 엔티티와 연관된 엔티티도 함께 영속 상태로 만드는 것을 말한다.
+```java
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Post extends BaseTimeEntity {
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "post_id")
+    private Long id;
+
+    @JsonIgnore
+	  // cascade all 속성 사용. post 엔티티 저장시 연관된 postImg 엔티티도 함께 영속화. post 엔티티 삭제시 이에 연관된 postImg엔티티도 함께 삭제
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostImg> postImgs = new ArrayList<>();
+}
+```
+	* `cascade=CascadeType.PERSIST` : 함께 영속화
+	* `cascade=CascadeType.REMOVE` : 함께 삭제
+	* `cascade=CascadeType.ALL` : 전체 적용
+	* `MERGE`, `REFRESH`, `DETACH` 도 있다.
+영속성 전이는 연관관계 매핑과는 아무 연관이 없다. 단지 엔티티 영속화시, 연관된 엔티티도 함께 영속화하는 편리함만을 제공한다.
+
+`CascadeType.ALL` 속성과 `orphanRemoval=true` 속성을 모두 활성화하면 부모 엔티티를 통해 자식 엔티티의 생명주기를 관리할 수 있다. 스스로 생명주기를 관리하는 엔티티는 `EntityManager`를 통해 영속화 및 제거하고, 자식 엔티티는 부모 엔티티에 의해 생명주기가 관리된다.
+
+
+
+
+
+## 고아 객체
+고아 객체는 부모 엔티티와 연관관계가 끊어진 자식 엔티티를 말한다.
+`parent.getChildList().remove(0);` -> 부모 엔티티(`parent`)의 자식 엔티티 컬렉션(`childList`)에서 0번째 인덱스에 있는 `child`를 제거했다. 이제 `child` 엔티티는 어떠한 곳에서도 연관 관계를 가지지 않는다. 따라서 `child` 엔티티는 고아 객체가 되었다.
+
+부모 엔티티에서 자식 엔티티의 연관 관계를 끊을 때, 해당 자식 엔티티를 자동으로 삭제하도록 하려면 `@OneTo-` 연관 관계 매핑시 `orphanRemoval=true` 속성을 사용하면 된다. 이는 마치 `CascadeType.REMOVE`처럼 동작한다.
+
+고아 객체 자동 삭제 기능은 참조가 제거된 엔티티는 다른 곳에서 참조하지 않는 것으로 간주하고 삭제하는 기능이다. 부모-자식 연관 관계를 끊을 때, 다른 곳에서도 자식 엔티티를 참조하고 있는데도 `orphanRemoval` 기능을 사용하면 예기치 못한 문제가 발생할 수 있다. 꼭 참조하는 곳이 하나일 때에만 사용해야 한다.
+
+
+
+
+
+## JPQL
+JPQL은 SQL을 추상화한 객체 지향 쿼리 언어다. SQL은 DB 테이블을 대상으로 쿼리하지만, JPQL은 엔티티 객체를 대상으로 쿼리한다. JPQL은 SQL을 추상화 하였기 때문에 특정 DB에 의존하지 않는다.
+
+JPQL의 반환 타입은 2가지이다. `javax.persistence.Query`, `javax.persistence.TypedQuery`
+`javax.persistence.TypedQuery`는 JPQL의 반환 타입이 명확할 때 사용한다.
+`javax.persistence.Query`는 JPQL의 반환 타입이 명확하지 않을 때 사용한다.
+
+JPQL은 프로젝션을 이용하여 조회할 대상을 지정한다. 프로젝션은 `select` 절에 조회할 대상을 지정하는 것이다.
+엔티티 프로젝션, 임베디드 타입 프로젝션, 스칼라 타입 프로젝션이 있다.
+엔티티 프로젝션은 `select m from Member m;`과 같이 엔티티를 조회하는 것이다.
+임베디드 타입 프로젝션은 `select m.address from Member m;`과 같이 엔티티의 임베디드 타입을 조회하는 것이다.
+스칼라 타입 프로젝션은 `select m.username from Member m;`과 같이 엔티티의 기본 값 타입을 조회하는 것이다. 
+
+JPQL은 페이징 API도 제공한다.
+`setFirstResult(int startPosition)`을 통해 페이징을 시작할 위치를 지정할 수 있고, `setMaxResults(int maxResult)`를 통해 조회할 결과의 최대 갯수를 지정할 수 있다.
+
+JPQL은 `on`절을 제공한다.
+`on`절은 조인 대상을 필터링 하고, 연관관계가 없는 엔티티를 외부 조인하게끔 해준다.
+```java
+@Query("select m from Member m join Post p on m.createdDate = p.createdDate")
+public void test();
+```
+
+위 JPQL 쿼리에서 `m.createdDate`, `p.createdDate`의 `.`은 경로 표현식을 사용한 것이다.
+경로 표현식은 `.`을 통해 객체 그래프를 탐색하는 것을 말한다.
+객체에는 상태 필드와 연관 필드가 있다. 상태 필드는 단순히 값을 저장하기 위한 필드를 말하고, 연관 필드는 연관 관계를 위한 필드다. 위 예시에서 `.`을 통해 접근한 필드는 상태 필드이다. 
+연관 관계 필드는 단일 값 연관 필드와 컬렉션 값 연관 필드가 있다. 단일 값 연관 필드는 대상이 엔티티로 `@-ToOne` 연관 관계를 가진다. 컬렉션 값 연관 필드는 대상이 컬렉션으로 `@-ToMany` 연관 관계를 가진다.
+경로 탐색을 통해(`.`을 찍어서) 연관 필드에 접근하게 되면 묵시적 조인이 발생하여 내부 조인이 일어난다. 묵시적 조인이 발생하면 조인으로 인한 문제 발생시 조인이 발생한 위치를 찾기가 상당히 힘들다. 가급적이면 명시적 조인을 이용할 수 있도록 주의하도록 한다.
+
+
+
+
+
+## Fetch Join
+`Fetch Join`은 JPQL에서 성능 최적화를 위해 제공하는 기능으로 연관된 엔티티나 컬렉션을 추가 쿼리 없이 SQL 한번에 함께 조회할 수 있도록 하는 기능이다. 페치 조인을 통해 연관된 여러 엔티티를 조회하면 지연 로딩이 발생하지 않아 성능이 최적화된다. 페치 조인은 객체 그래프를 SQL 한번에 조회하는 개념이다. 
+페치 조인을 사용하는 JPQL 쿼리는 다음과 같다.
+```java
+String fetchJoinJpql = 
+	"select o from Order o join fetch o.member m join fetch o.delivery d";
+```
+`프로젝션 join fetch 프로젝션.필드 필드별칭` <- 이와 같은 형식을 사용한다.
+
+### distinct
+JPQL에서 `distinct`는 SQL에 `distinct`를 추가하고, 애플리케이션에서 엔티티의 중복도 제거하는 기능을 한다. `1 .. *`(일대다) 관계에서 1을 기준으로 조인하여 SQL 검색 쿼리를 전송하면 검색 결과에 중복된 데이터가 있다. 
+JPQL에서 `fetch join`으로 데이터를 가져올 때, `distinct`를 사용하면 애플리케이션으로 가져온 검색 결과 데이터를 엔티티에 넣으면서 같은 식별자를 가진 중복된 데이터들을 제거해준다.
+
+### Fetch Join 한계
+페치 조인은 JPQL의 성능을 최적화한다. 하지만 한계가 존재한다.
+	- 둘 이상의 컬렉션은 페치 조인 할 수 없다.
+	- 컬렉션을 페치 조인하면 페이징 API를 사용할 수 없다.
+		- SQL 결과에 중복된 데이터들이 다수 존재하여 데이터가 뻥튀기 되어버리기 때문이다.
+		- JPQL의 `distinct`는 SQL 결과에서 데이터 중복을 제거하는 것이 아니라 애플리케이션으로 가져온 결과에서 엔티티에 데이터를 담으면서 제거하는 것이다. 따라서 JPQL `distinct`로 페이징 문제를 해결할 수는 없다.
+		- 컬렉션을 페치 조인하고 페이징 API를 사용할 경우, 하이버네이트는 경고 로그를 남기고 메모리에서 페이징 한다.
+		- 메모리에서 페이징은 매우 위험하다. 결과적으로 메모리 부족으로 인해 애플리케이션에 장애가 발생할 수 있다.
+
+> 여러 테이블을 조인해서 엔티티가 가진 모양이 아니라 전혀 다른 결과를 내야 한다면, 페치 조인보다는 일반 조인을 사용하고, 필요한 데이터들로만 조회하여 DTO로 반환하는 것이 효과적이다.  
+
+
+### 벌크 연산
+* executeUpdate()
+	* 쿼리 한번으로 여러 테이블 row를 변경한다.
+	* 영향받은 엔티티의 수를 반환한다.
+	* Update와 Delete를 지원한다.
+	* 하이버네이트는 insert도 지원한다.
+* 하지만 벌크 연산은 영속성 컨텍스트를 무시하고 DB에 직접 쿼리한다.
+* 따라서 벌크 연산 수행 후 영속성 컨텍스트를 초기화 해줘야 한다.
+
+
+
+- - - -
+## 기타 설정
+### SQL 쿼리 로그 출력
+> 모든 출력은 가급적 로거를 통해 남긴다.  
+> `show_sql` 옵션은 `System.out`에 하이버네이트 실행 SQL을 남긴다.  
+> `org.hibernate.SQL` 옵션은 `logger`를 통해 하이버네이트 실행 SQL을 남긴다.  
+```yaml
+spring:
+	jpa:
+		properties:
+			hibernate:
+#				show_sql: true  <- System.out
+logging.level:
+	org.hibernate.SQL: debug  # <- logger
+
+```
+
+### 테스트 케이스 작성시
+- 테스트 케이스는 격리된 환경에서 실행하고, 끝나면 데이터를 초기화하는 것이 좋다. -> 메모리 DB 사용.
+- 테스트 케이스를 위한 스프링 환경과, 애플리케이션을 실행하는 환경은 보통 다르므로 설정 파일을 다르게 사용 -> 테스트용 설정 파일 추가
+- `test/resources/application.yml`
+```yaml
+spring:
+logging.leverl:
+	org.hibernate.SQL: debug
+```
+	- 스프링 부트는 `datasource` 설정이 없으면 기본적으로 Memory DB를 사용, `driver-class`도 현재 등록된 라이브러리를 보고 찾아줌. `ddl-auto`도 `create-drop` 모드로 동작
+
+
+### 페이징 + 컬렉션 엔티티 조회
+- `-ToOne` 관계를 모두 페치조인.
+- 컬렉션은 지연로딩으로 조회
+- 지연로딩 성능 최적화를 위해 `hibernate.default_batch_fetch_size`, `@BatchSize` 적용
+	- `hibernate.default_batch_fetch_size` : 글로벌 설정
+	- `@BatchSize` : 개별 최적화 <- 컬렉션은 컬렉션 필드, 엔티티는 엔티티 클래스에 적용
+	- 이를 이용하면 컬렉션이나 프록시 객체를 한꺼번에 설정한 size 만큼 IN 쿼리로 조회
+```yaml
+spring: 
+	jpa: 
+		properties:
+			hibernate:
+				default_batch_fetch_size: 1000
+# DB or App이 견딜 수 있는 순간부하에 따라 설정하도록 한다.
+# 100 ~ 1000 권장.
+```
+
+#### 권장 순서
+1. Entity 조회 방식
+	1. `fetch join`을 통해 Query 수 최적화 
+	2. 컬렉션 최적화 
+		1. 페이징 필요시 : `default_batch_fetch_size`, `@BatchSize` 사용
+		2. 페이징 필요X : `fetch join` 사용
+2. 엔티티 조회 방식으로 해결 X -> DTO 조회 방식 사용
+3. DTO 조회 방식으로 해결 X -> `NativeSQL` or `스프링 JdbcTemplate`
+
+> 성능 최적화와 코드 복잡도를 고려하여 적절한 방식을 통해 성능 최적화를 하자. 유지보수를 위해서 단순한 코드가 좋지만 성능 최적화는 보통 복잡한 코드를 동반한다. 상황에 따라 효율적인 방법을 이용.  
+
+
+
+### OSIV
+- Open Session In View <- Hibernate
+- Open EntityManager In View <- JPA
+관례상 `OSIV`라고 한다.
+```yaml
+spring.jpa.open-in-view: true # or false (default: true)
+```
+
+`OSIV`를 `true`로 두면 최초 DB Connection 시점부터 API 응답 종료시까지 영속성 컨텍스트와 DB Conn을 유지한다. 트랜잭션이 종료되어도 `Controller`에서 지연로딩이 가능하다. DB Connection Resource를 너무 오래 사용하기 때문에 connection이 부족할 수 있다.
+`OSIV`를 `false`로 두어 옵션을 끄면 트랜잭션 종료시에 영속성 컨텍스트를 `off`, DB conn을 반환한다. 따라서 지연 로딩을 `Controller`까지 끌고가도 트랜잭션 밖에서는 지연로딩이 안된다.
+`OSIV` 옵션을 끈 상태에서 복잡성을 관리하는 방법은 `Command`와 `Query`를 분리하는 것이다. 쉽게 설명하면 관심사를 분리하는 것이다. 핵심 비즈니스 로직이 담긴 `Service`와 View 출력을 위한 `QueryService` 등으로 분리한다면 복잡성을 관리하기 용이할 것이다. [Command–query separation - Wikipedia](https://en.wikipedia.org/wiki/Command%E2%80%93query_separation)
+
+
+
+### JPA 어노테이션 정리
+- `@Entity` : 클래스를 엔티티로 선언
+- `@Table` : 테이블명과 매핑
+- `@Id` : PK
+- `@GeneratedValue` : PK값 자동 증가
+- `@Column` : 해당 속성을 컬럼명과 매핑
+- `@ManyToMany` : 다대다 관계
+- `@ManyToOne(fetch = FetchType.LAZY)` : 다대일 관계
+- `@OneToMany(mappedBy = "매핑할Entity")` : 일대다 관계
+- `@OneToOne` : 일대일 관계
+	- `-ToOne` 관계는 `fetch`타입 지정 <- 기본이 즉시로딩이기 때문에 바꿔준다.
+	- `-ToMany` 관계는 `mappedBy` 속성 지정
+- `@JoinColumn(name = "targetEntity의 기본키")`
+	- `-ToOne` 관계와 함께 붙여 외래키 지정
+- `@Inheritance(strategy = InheritanceType.XXX)`
+	- 상속관계 전략. 조상 class에 붙인다.
+- `@DiscriminatorColumn(name = “xxx”)`
+	- 상속관계 - 매핑할 컬럼 지정. 조상 class에 붙인다.
+- `@DiscriminatorValue("XXX")`
+	- 상속관계 - 컬럼에 입력될 값. 자손 class에 붙인다.
+- `@Enumerated(EnumType.STRING) ` : EnumType
+- `@Embedded` : 값타입 사용
+- `@Embeddable` : 값타입 지정
+
+
+
+
+
