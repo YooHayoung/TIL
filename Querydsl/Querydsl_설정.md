@@ -5,39 +5,55 @@
 ---
 
 ## `build.gradle`에 qeurydsl 설정 추가
-
+## 22.07.08 수정함
 
 
 ```gradle
 buildscript {
-   ext {
-      queryDslVersion = "5.0.0"
-   }
+	dependencies {
+		classpath("gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:1.0.10")
+	}
 }
 
 plugins {
    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
+apply plugin: "com.ewerk.gradle.plugins.querydsl"
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
 dependencies {
-   implementation 'com.querydsl:querydsl-jpa:${queryDslVersion}'
-   annotationProcessor 'com.querydsl:querydsl-apt:${queryDslVersion}'
+	implementation 'com.querydsl:querydsl-jpa'
+	annotationProcessor 'com.querydsl:querydsl-apt'
 }
 
 def querydslDir = "$buildDir/generated/querydsl"
 
 querydsl {
-   jpa = true
-   querydslSourcesDir = querydslDir
+	library = "com.querydsl:querydsl-apt"
+	jpa = true
+	querydslSourcesDir = querydslDir
 }
+
 sourceSets {
-   main.java.srcDir querydslDir
+	main {
+		java {
+			srcDirs = ['src/main/java', querydslDir]
+		}
+	}
 }
+
+compileQuerydsl{
+	options.annotationProcessorPath = configurations.querydsl
+}
+
 configurations {
-   querydsl.extendsFrom compileClasspath
-}
-compileQuerydsl {
-   options.annotationProcessorPath = configurations.querydsl
+	querydsl.extendsFrom compileClasspath
 }
 ```
 
