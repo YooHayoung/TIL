@@ -1,16 +1,16 @@
 # JPA 핵심 이론
-[1. JPA와 ORM](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=JPA%EC%99%80%20ORM)
-[2. 영속성 컨텍스트](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=%EC%98%81%EC%86%8D%EC%84%B1%20%EC%BB%A8%ED%85%8D%EC%8A%A4%ED%8A%B8)
-[3. Entity Mapping](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=Entity%20Mapping)
-[4. 연관관계](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=%EC%97%B0%EA%B4%80%EA%B4%80%EA%B3%84)
-[5. 프록시](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=%ED%94%84%EB%A1%9D%EC%8B%9C)
-[6. 상속 관계](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=%EC%83%81%EC%86%8D%20%EA%B4%80%EA%B3%84)
-[7. 값 타입](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=%EA%B0%92%20%ED%83%80%EC%9E%85)
-[8. 영속성 전이](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=%EC%98%81%EC%86%8D%EC%84%B1%20%EC%A0%84%EC%9D%B4)
-[9. 고아 객체](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=%EA%B3%A0%EC%95%84%20%EA%B0%9D%EC%B2%B4)
-[10. JPQL](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=JPQL)
-[11. Fetch Join](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=Fetch%20Join)
-[12. 기타 설정](bear://x-callback-url/open-note?id=B67704BF-7A21-4424-8F96-D07DD04680B3-798-00000117BFA2E805&header=%EA%B8%B0%ED%83%80%20%EC%84%A4%EC%A0%95)
+[1. JPA와 ORM](#jpa와-orm)
+[2. 영속성 컨텍스트](#영속성-컨텍스트)
+[3. Entity Mapping](#entity-mapping)
+[4. 연관관계](#연관관계)
+[5. 프록시](#프록시)
+[6. 상속 관계](#상속-관계)
+[7. 값 타입](#값-타입)
+[8. 영속성 전이](#영속성-전이)
+[9. 고아 객체](#고아-객체)
+[10. JPQL](#jpql)
+[11. Fetch Join](#fetch-join)
+[12. 기타 설정](#기타-설정)
 
 
 
