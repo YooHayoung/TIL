@@ -418,8 +418,107 @@ public String list(
 
 ## 기타
 기타 다음과 같은 기능들도 제공한다.
+	- Specifications(명세)
+	- Query By Example
+	- Projections
+	- Native Query
 
-- Specifications(명세)
-- Query By Example
-- Projections
-- Native Query
+### Projections
+`Projections` 기능은 엔티티 대신에 DTO를 편리하게 조회할 때 사용한다. 만약 전체 엔티티가 아니라 엔티티의 특정 필드만 조회하고 싶다면 조회할 엔티티의 필드를 `getter` 형식으로 지정하면 해당 필드만 선택해서 조회할 수 있다. 이를 `Projection` 이라고 한다.
+
+```java
+// 프로젝션의 반환값을 위한 interface. getter 형식으로 필드를 지정한다.
+// 프로퍼티 형식(getter)의 인터페이스를 제공하면 구현체는 스프링 데이터 JPA가 제공한다.
+public interface UsernameOnly {
+	String getUsername();
+}
+
+
+public interface MemberRepository extends JpaRepository<Member, Long> {
+	// 메서드 이름은 상관이 없다. 반환 타입으로 프로젝션을 인식한다.
+	List<UsernameOnly> findProjectionsByUsername(String username);
+}
+
+// 위 메서드를 수행하면 select m.username from member m where m.username='m1'; 과 같은 쿼리가 수행되어 username만을 select 절로 조회한다.
+```
+
+#### 인터페이스 기반의 프로젝션
+프로젝션을 위해 프로퍼티 형식(getter)의 인터페이스를 제공하면 구현체는 스프링 데이터 JPA가 제공한다. 또한 아래와 같이 스프링의 SpEL 문법도 지원한다. 하지만 SpEL 문법을 사용하면 DB에서 엔티티 필드를 다 조회해온 다음에 계산한다. JPQL select 절의 최적화가 안된다.
+```java
+public interface UsernameOnly {
+	@Value("#{target.username + ' ' + target.age + ' ' + target.team.name}")
+	String getUsername();
+}
+```
+
+#### 클래스 기반 프로젝션
+인터페이스가 아니라 클래스 기반의 구체적인 DTO 형식도 가능하다. 해당 방식은 생성자의 파라미터 이름으로 매칭된다.
+```java
+public class UsernameOnlyDto {
+	private final String username;
+
+	public UsernameOnlyDto(String username) { this.username = username; }
+
+	public String getUsername() { return username; }
+}
+```
+
+#### 동적 Projections
+프로젝션에 제네릭 타입을 주면 동적으로 프로젝션 데이터를 변경할 수 있다.
+```java
+<T> List<T> findProjectionsByUsername(String username, Class<T> type);
+```
+
+#### 프로젝션 중첩
+프로젝션에 프로젝션을 두어 중첩으로 구조를 처리할 수 있다.
+```java
+public interface NestedClosedProjection {
+	String getUsername();
+	TeamInfo getTeam();
+	
+	interface TeamInfo { String getName(); }
+}
+// 위 프로젝션을 이용하면 아래와 같은 SQL을 수행한다.
+/*
+select
+      m.username as col_0_0_,
+      t.teamid as col_1_0_,
+      t.teamid as teamid1_2_,
+      t.name as name2_2_
+from 
+member m 
+  left outer join
+      team t
+          on m.teamid=t.teamid
+where 
+      m.username=?
+*/
+```
+
+프로젝션은 대상이 루트 엔티티면 JPQL SELECT 절을 최적화 할 수 있다. 이 경우는 유용하게 사용가능하다. 하지만 루트 엔티티를 넘어가게 되면 `left outer join` 처리되기 때문에 모든 필드를 SELECT해서 엔티티로 조회한 다음 계산한다. 따라서 JPQL SELECT 최적화가 불가능하다. 때문에 단순할 때에만 프로젝션을 사용하고, 복잡해지면 QueryDSL을 사용하는 것이 좋다.
+
+
+### 네이티브 쿼리
+DB SQL 쿼리를 직접 작성하여 DB에 해당 쿼리를 직접 전송할 수 있도록 한다. 네이티브 쿼리는 재사용이 거의 불가능하기 때문에, 특정 DB에 의존적이기 때문에 가능하면 사용하지 않는 것이 좋다.
+
+`Spring Data JPA` 기반 네이티브 쿼리는 페이징을 지원하고, `Object[]`, `Tuple`, `DTO` 등의 반환 타입을 지원한다. 하지만 `Sort` 파라미터를 통한 정렬이 정상 동작하지 않을 수도 있고, 쿼리의 문법을 애플리케이션 로딩 시점에 확인할 수 없으며, 동적 쿼리가 불가능하다.
+
+네이티브 쿼리를 작성하는 방법은 `@Query` 애노테이션에 `nativeQuery = true` 속성을 전달하면 된다. 해당 애노테이션에 전달된 쿼리는 네이티브 SQL로 동작한다. JPQL과의 차이로는, JPQL은 위치 기반 파라미터를 1부터 시작하지만 네이티브 쿼리는 0부터 시작한다.
+
+네이티브 SQL의 결과를 엔티티가 아닌 DTO로 변환하려면 DTO 대신 JPA TUPLE을 사용하여 조회하는 방법, MAP을 사용하는 방법, `@SqlResultSetMapping` 애노테이션을 사용하는 방법, `Hibernate ResultTransformer`를 사용하는 방법, `JdbcTemplate`, `MyBatis`를 사용하는 방법 등이 있다.
+네이티브 SQL을 DTO로 조회할 때에는 `JdbcTemplate`, `MyBatis`를 사용하는 방법을 가장 권장한다.
+
+조회 쿼리는 네이티브 쿼리를 통해 작성하고, 조회 결과를 프로젝션을 통해 받으면 프로젝션과 네이티브 쿼리를 활용할 수 있다.
+
+동적 네이티브 쿼리를 작성하려면 하이버네이트를 직접 활용하거나, 스프링 JdbcTemplate, myBatis 등을 활용하는 방법이 있다. 아래는 하이버네이트의 기능을 사용하여 네이티브 쿼리로 동적 쿼리를 작성한 예이다.
+
+```java
+String sql = "select m.username as username from member m";
+  List<MemberDto> result = em.createNativeQuery(sql)
+          .setFirstResult(0)
+          .setMaxResults(10)
+          .unwrap(NativeQuery.class)
+          .addScalar("username")
+          .setResultTransformer(Transformers.aliasToBean(MemberDto.class))
+          .getResultList();
+```
