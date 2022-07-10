@@ -1,16 +1,27 @@
 # Spring Data JPA
-[1. Spring Data JPA 설명](bear://x-callback-url/open-note?id=177C7F2E-1E48-40D3-BB13-E3A475113D81-798-00000273ADABC49D&header=Spring%20Data%20JPA%20%EC%84%A4%EB%AA%85)
-[2. 쿼리 메서드 기능](bear://x-callback-url/open-note?id=177C7F2E-1E48-40D3-BB13-E3A475113D81-798-00000273ADABC49D&header=%EC%BF%BC%EB%A6%AC%20%EB%A9%94%EC%84%9C%EB%93%9C%20%EA%B8%B0%EB%8A%A5)
-[3. @Query 애노테이션을 사용하여 값, DTO 조회](bear://x-callback-url/open-note?id=177C7F2E-1E48-40D3-BB13-E3A475113D81-798-00000273ADABC49D&header=%60@Query%60%20%EC%95%A0%EB%85%B8%ED%85%8C%EC%9D%B4%EC%85%98%EC%9D%84%20%EC%82%AC%EC%9A%A9%ED%95%98%EC%97%AC%20%EA%B0%92,%20DTO%20%EC%A1%B0%ED%9A%8C)
-[4. 파라미터 바인딩](bear://x-callback-url/open-note?id=177C7F2E-1E48-40D3-BB13-E3A475113D81-798-00000273ADABC49D&header=%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0%20%EB%B0%94%EC%9D%B8%EB%94%A9)
-[5. 유연한 반환 타입](bear://x-callback-url/open-note?id=177C7F2E-1E48-40D3-BB13-E3A475113D81-798-00000273ADABC49D&header=%EC%9C%A0%EC%97%B0%ED%95%9C%20%EB%B0%98%ED%99%98%20%ED%83%80%EC%9E%85)
-[6. 페이징](bear://x-callback-url/open-note?id=177C7F2E-1E48-40D3-BB13-E3A475113D81-798-00000273ADABC49D&header=%ED%8E%98%EC%9D%B4%EC%A7%95)
-[7. 벌크성 수정 쿼리](bear://x-callback-url/open-note?id=177C7F2E-1E48-40D3-BB13-E3A475113D81-798-00000273ADABC49D&header=%EB%B2%8C%ED%81%AC%EC%84%B1%20%EC%88%98%EC%A0%95%20%EC%BF%BC%EB%A6%AC)
-[8. @EntityGraph](bear://x-callback-url/open-note?id=177C7F2E-1E48-40D3-BB13-E3A475113D81-798-00000273ADABC49D&header=%60@EntityGraph%60)
-[9. 사용자 정의 기능 추가](bear://x-callback-url/open-note?id=177C7F2E-1E48-40D3-BB13-E3A475113D81-798-00000273ADABC49D&header=%EC%82%AC%EC%9A%A9%EC%9E%90%20%EC%A0%95%EC%9D%98%20%EA%B8%B0%EB%8A%A5%20%EC%B6%94%EA%B0%80)
-[10. Auditing](bear://x-callback-url/open-note?id=177C7F2E-1E48-40D3-BB13-E3A475113D81-798-00000273ADABC49D&header=Auditing)
-[11. Web 확장 - 도메인 클래스 컨버터](bear://x-callback-url/open-note?id=177C7F2E-1E48-40D3-BB13-E3A475113D81-798-00000273ADABC49D&header=Web%20%ED%99%95%EC%9E%A5%20-%20%EB%8F%84%EB%A9%94%EC%9D%B8%20%ED%81%B4%EB%9E%98%EC%8A%A4%20%EC%BB%A8%EB%B2%84%ED%84%B0)
-[12. Web 확장 - 페이징과 정렬](bear://x-callback-url/open-note?id=177C7F2E-1E48-40D3-BB13-E3A475113D81-798-00000273ADABC49D&header=Web%20%ED%99%95%EC%9E%A5%20-%20%ED%8E%98%EC%9D%B4%EC%A7%95%EA%B3%BC%20%EC%A0%95%EB%A0%AC)
+[1. Spring Data JPA 설명](#spring-data-jpa-설명)
+
+[2. 쿼리 메서드 기능](#쿼리-메서드-기능)
+
+[3. @Query 애노테이션을 사용하여 값, DTO 조회](#@query-애노테이션을-사용하여-값,-DTO-조회)
+
+[4. 파라미터 바인딩](#파라미터-바인딩)
+
+[5. 유연한 반환 타입](#유연한-반환-타입)
+
+[6. 페이징](#페이징)
+
+[7. 벌크성 수정 쿼리](#벌크성-수정-쿼리)
+
+[8. @EntityGraph](#@entitygraph)
+
+[9. 사용자 정의 기능 추가](#사용자-정의-기능-추가)
+
+[10. Auditing](#auditing)
+
+[11. Web 확장 - 도메인 클래스 컨버터](#web-확장---도메인-클래스-컨버터)
+	
+[12. Web 확장 - 페이징과 정렬](#web-확장---페이징과 정렬)
 
 
 
