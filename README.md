@@ -4,21 +4,20 @@
 Yoo Hayoung's [TIL collection][1].
 
 
-_23 TILs and counting..._
+_19 TILs and counting..._
 
 ---
 
 ### 3 most recent TILs
 
+- [Querydsl](Spring_Data/Querydsl.md) - Wed Jul 13 20:41:43 2022 +0900
 - [스프링 핵심](Spring_핵심/스프링_핵심.md) - Sun Jul 10 14:20:35 2022 +0900
-- [Effective Java](JAVA/Effective_Java.md) - Sun Jul 10 14:20:35 2022 +0900
-- [스프링 Web MVC](Spring_핵심/스프링_WEB_MVC.md) - Sun Jul 10 14:20:35 2022 +0900
+- [스프링 빈](Spring_핵심/스프링_빈.md) - Sun Jul 10 14:20:35 2022 +0900
 
 ### Categories
 
 - [ETC](#ETC)
 - [JAVA](#JAVA)
-- [JPA](#JPA)
 - [Spring_Data](#Spring_Data)
 - [Spring_MVC](#Spring_MVC)
 - [Spring_핵심](#Spring_핵심)
@@ -32,15 +31,9 @@ _23 TILs and counting..._
 - [Effective Java](JAVA/Effective_Java.md)
 - [JAVA](JAVA/JAVA.md)
 
-### [JPA](#JPA)
-- [JPA 핵심 이론](JPA/JPA_핵심_이론.md)
-
 ### [Spring_Data](#Spring_Data)
 - [JPA 핵심 이론](Spring_Data/JPA_핵심_이론.md)
-- [JPA와 Querydls](Spring_Data/JPA와_Querydsl.md)
-- [Querydsl 기본 문법](Spring_Data/Querydsl_기본_문법.md)
-- [Querydsl 설정](Spring_Data/Querydsl_설정.md)
-- [Querydls 중급 문법](Spring_Data/Querydsl_중급_문법.md)
+- [Querydsl](Spring_Data/Querydsl.md)
 - [Spring Data JPA](Spring_Data/SpringDataJPA.md)
 
 ### [Spring_MVC](#Spring_MVC)
