@@ -132,8 +132,8 @@ public class QuerydslTestClass {
 
 
 
-## Querydsl 문법
-### Q 타입 인스턴스 사용
+## Querydsl 문법
+### Q 타입 인스턴스 사용
 Q 타입의 인스턴스를 사용하는 방법은 2가지로 다음과 같다.
 ```java
 QMember qMember = new QMember("m"); // 별칭 직접 지정
