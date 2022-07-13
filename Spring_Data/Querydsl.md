@@ -1,10 +1,16 @@
 # Querydsl
 [1. Querydsl 설명](#querydsl-설명)
+
 [2. Querydsl 설정](#querydsl-설정)
+
 [3. Q Type 파일 생성](#q-type-파일-생성)
+
 [4. Querydsl 적용](#querydsl-적용)
+
 [5. Querydsl 문법](#querydsl-문법)
+
 [6. JPA와 QueryDSL](#jpa와-querydsl)
+
 
 ## Querydsl 설명
 기존 JPQL이나 쿼리를 직접 작성하는 방식에서 쿼리는 문자이기 때문에 해당 쿼리가 실행되기 전 까지는 작동 여부를 확인할 수 없다. 쿼리에 바인딩되는 타입의 체크도 불가능하다. 이 방식은 오류를 런타임에 잡을 수 있는 것이다. 타입 체크가 불가능하기 때문에 동적 쿼리를 작성하기 어렵다는 단점이 있다. 이러한 문제를 해결하기위해 QueryDSL이 등장했다.
