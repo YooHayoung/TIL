@@ -1,10 +1,10 @@
 # Querydsl
-[1. Querydsl 설명](bear://x-callback-url/open-note?id=62F577B2-BDCF-483B-B0B9-71C1BAC95547-798-00000275EF26AE37&header=Querydsl%20%EC%84%A4%EB%AA%85)
-[2. Querydsl 설정](bear://x-callback-url/open-note?id=62F577B2-BDCF-483B-B0B9-71C1BAC95547-798-00000275EF26AE37&header=Querydsl%20%EC%84%A4%EC%A0%95)
-[3. Q Type 파일 생성](bear://x-callback-url/open-note?id=62F577B2-BDCF-483B-B0B9-71C1BAC95547-798-00000275EF26AE37&header=Q%20Type%20%ED%8C%8C%EC%9D%BC%20%EC%83%9D%EC%84%B1)
-[4. Querydsl 적용](bear://x-callback-url/open-note?id=62F577B2-BDCF-483B-B0B9-71C1BAC95547-798-00000275EF26AE37&header=Querydsl%20%EC%A0%81%EC%9A%A9)
-[5. Querydsl 문법](bear://x-callback-url/open-note?id=62F577B2-BDCF-483B-B0B9-71C1BAC95547-798-00000275EF26AE37&header=Querydsl%20%EB%AC%B8%1D%EB%B2%95)
-[6. JPA와 QueryDSL](bear://x-callback-url/open-note?id=62F577B2-BDCF-483B-B0B9-71C1BAC95547-798-00000275EF26AE37&header=JPA%EC%99%80%20QueryDSL)
+[1. Querydsl 설명](#querydsl-설명)
+[2. Querydsl 설정](#querydsl-설정)
+[3. Q Type 파일 생성](#q-type-파일-생성)
+[4. Querydsl 적용](#querydsl-적용)
+[5. Querydsl 문법](#querydsl-문법)
+[6. JPA와 QueryDSL](#jpa와-querydsl)
 
 ## Querydsl 설명
 기존 JPQL이나 쿼리를 직접 작성하는 방식에서 쿼리는 문자이기 때문에 해당 쿼리가 실행되기 전 까지는 작동 여부를 확인할 수 없다. 쿼리에 바인딩되는 타입의 체크도 불가능하다. 이 방식은 오류를 런타임에 잡을 수 있는 것이다. 타입 체크가 불가능하기 때문에 동적 쿼리를 작성하기 어렵다는 단점이 있다. 이러한 문제를 해결하기위해 QueryDSL이 등장했다.
@@ -344,10 +344,10 @@ queryFactroy
 
 
 ### 조인
-[조인 - 기본 조인](bear://x-callback-url/open-note?id=62F577B2-BDCF-483B-B0B9-71C1BAC95547-798-00000275EF26AE37&header=%EA%B8%B0%EB%B3%B8%20%EC%A1%B0%EC%9D%B8)
-[조인 - 세타 조인](bear://x-callback-url/open-note?id=62F577B2-BDCF-483B-B0B9-71C1BAC95547-798-00000275EF26AE37&header=%EC%84%B8%ED%83%80%20%EC%A1%B0%EC%9D%B8)
-[조인 - ON 절](bear://x-callback-url/open-note?id=62F577B2-BDCF-483B-B0B9-71C1BAC95547-798-00000275EF26AE37&header=ON%20%EC%A0%88)
-[조인 - fetch 조인](bear://x-callback-url/open-note?id=62F577B2-BDCF-483B-B0B9-71C1BAC95547-798-00000275EF26AE37&header=fetch%20%EC%A1%B0%EC%9D%B8)
+[조인 - 기본 조인](#조인---기본-조인)
+[조인 - 세타 조인](#조인---세타-조인)
+[조인 - ON 절](#조인---on-절)
+[조인 - fetch 조인](#조인---fetch-조인)
 
 #### 기본 조인
 조인은 조인 메서드에 파라미터로 조인 대상과, 별칭으로 사용할 Q 타입을 지정하여 사용할 수 있다.
