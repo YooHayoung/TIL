@@ -1,13 +1,21 @@
 # 스프링 DB
-[1. JDBC](bear://x-callback-url/open-note?id=DE73B63A-3673-467B-9A40-611B7944D8A6-19220-0000051249863A99&header=JDBC)
-[2. 커넥션 풀](bear://x-callback-url/open-note?id=DE73B63A-3673-467B-9A40-611B7944D8A6-19220-0000051249863A99&header=%EC%BB%A4%EB%84%A5%EC%85%98%20%ED%92%80)
-[3. DataSource](bear://x-callback-url/open-note?id=DE73B63A-3673-467B-9A40-611B7944D8A6-19220-0000051249863A99&header=DataSource)
-[4. 트랜잭션](bear://x-callback-url/open-note?id=DE73B63A-3673-467B-9A40-611B7944D8A6-19220-0000051249863A99&header=%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98)
-[5. 스프링의 트랜잭션](bear://x-callback-url/open-note?id=DE73B63A-3673-467B-9A40-611B7944D8A6-19220-0000051249863A99&header=%EC%8A%A4%ED%94%84%EB%A7%81%EC%9D%98%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98)
-	[(1) 선언적 트랜잭션 관리](bear://x-callback-url/open-note?id=DE73B63A-3673-467B-9A40-611B7944D8A6-19220-0000051249863A99&header=%EC%84%A0%EC%96%B8%EC%A0%81%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%20%EA%B4%80%EB%A6%AC)
-	[(2) 프로그래밍 방식 트랜잭션 관리](bear://x-callback-url/open-note?id=DE73B63A-3673-467B-9A40-611B7944D8A6-19220-0000051249863A99&header=%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D%20%EB%B0%A9%EC%8B%9D%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%20%EA%B4%80%EB%A6%AC)
-[6. 스프링의 `SQLException` 예외 처리](bear://x-callback-url/open-note?id=DE73B63A-3673-467B-9A40-611B7944D8A6-19220-0000051249863A99&header=%EC%8A%A4%ED%94%84%EB%A7%81%EC%9D%98%20%60SQLException%60%20%EC%98%88%EC%99%B8%20%EC%B2%98%EB%A6%AC)
-[7. 스프링 트랜잭션 전파](bear://x-callback-url/open-note?id=DE73B63A-3673-467B-9A40-611B7944D8A6-19220-0000051249863A99&header=%EC%8A%A4%ED%94%84%EB%A7%81%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%20%EC%A0%84%ED%8C%8C)
+[1. JDBC](#jdbc)
+
+[2. 커넥션 풀](#커넥션-풀)
+
+[3. DataSource](#datasource)
+
+[4. 트랜잭션](#트랜잭션)
+
+[5. 스프링의 트랜잭션](#스프링의-트랜잭션)
+
+	[(1) 선언적 트랜잭션 관리](#선언적-트랜잭션-관리)
+	
+	[(2) 프로그래밍 방식 트랜잭션 관리](#프로그래밍-방식-트랜잭션-관리)
+	
+[6. 스프링의 `SQLException` 예외 처리](#스프링의-`sqlexception`-예외-처리)
+
+[7. 스프링 트랜잭션 전파](#스프링-트랜잭션-전파)
 
 
 
@@ -101,8 +109,8 @@ DB에서 데이터를 가져오는 작업은 `Repository`에서 하지만 가져
 
 
 ## 스프링의 트랜잭션
-[선언적 트랜잭션 관리](bear://x-callback-url/open-note?id=DE73B63A-3673-467B-9A40-611B7944D8A6-19220-0000051249863A99&header=%EC%84%A0%EC%96%B8%EC%A0%81%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%20%EA%B4%80%EB%A6%AC)
-[프로그래밍 방식 트랜잭션 관리](bear://x-callback-url/open-note?id=DE73B63A-3673-467B-9A40-611B7944D8A6-19220-0000051249863A99&header=%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D%20%EB%B0%A9%EC%8B%9D%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%20%EA%B4%80%EB%A6%AC)
+[선언적 트랜잭션 관리](#선언적-트랜잭션-관리)
+[프로그래밍 방식 트랜잭션 관리](#프로그래밍-방식-트랜잭션-관리)
 
 ### 선언적 트랜잭션 관리
 스프링은 트랜잭션을 처리하기 위한 AOP 기능을 제공한다. 이를 이용하면 트랜잭션 적용을 위해 서비스 계층이 `javax.sql.DataSource`, `java.sql.Connection` 등의 JDBC 기술에 의존하게 되는 문제와 트랜잭션 적용을 위해 반복적으로 작성했던 `try, catch, finally` 구문을 해결할 수 있다. 트랜잭션과 관련된 로직을 더 이상 작성하지 않아도 되는 것이다.
@@ -319,3 +327,4 @@ public class Repository {
 
 
 ## 스프링 트랜잭션 전파
+내용 추가 하기
