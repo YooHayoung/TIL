@@ -22,24 +22,24 @@ _7 TILs and counting..._
 - [Study](#Study)
 - [정리할것](#정리할것)
 
-### [ETC](#ETC)
+### [ETC](ETC)
 - [AWS 배포하기](ETC/AWS_배포하기.md)
 
-### [JAVA](#JAVA)
+### [JAVA](JAVA)
 - [Effective Java](JAVA/Effective_Java.md)
 - [JAVA](JAVA/JAVA.md)
 
-### [Spring](#Spring)
+### [Spring](Spring)
 - [basic](Spring/basic)
 
 ### [Spring_Data](#Spring_Data)
 - [Querydsl](Spring_Data/Querydsl.md)
 
-### [Study](#Study)
+### [Study](Study)
 - [스프링 공부 내용 요약](Study/Spring_MVC_내용_요약.md)
 - [로그](Study/로그.md)
 
-### [정리할것](#정리할것)
+### [정리할것](정리할것)
 - [temp](정리할것/Learned.md)
 
 [1]: https://github.com/YooHayoung/TIL
