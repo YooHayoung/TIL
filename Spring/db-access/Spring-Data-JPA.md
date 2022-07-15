@@ -3,7 +3,7 @@
 
 [2. 쿼리 메서드 기능](#쿼리-메서드-기능)
 
-[3. @Query 애노테이션을 사용하여 값, DTO 조회](#@query-애노테이션을-사용하여-값,-DTO-조회)
+[3. @Query 애노테이션을 사용하여 값, DTO 조회](#query-애노테이션을-사용하여-값-dto-조회)
 
 [4. 파라미터 바인딩](#파라미터-바인딩)
 
@@ -13,7 +13,7 @@
 
 [7. 벌크성 수정 쿼리](#벌크성-수정-쿼리)
 
-[8. @EntityGraph](#@entitygraph)
+[8. @EntityGraph](#entitygraph)
 
 [9. 사용자 정의 기능 추가](#사용자-정의-기능-추가)
 
@@ -38,11 +38,12 @@ public interface MemberRepository extends JpaRepository<Member, Long>
 ```
 
 `JpaRepository`에서 제공하는 기본적인 기능들은 다음과 같은 것들이 있다.
-	* `save(S)` : 새로운 엔티티는 저장하고 이미 존재하는 엔티티는 병합한다.
-	* `delete(T)` : 엔티티를 삭제한다. 내부에서 `EntityManager.remove()`가 발생한다.
-	* `findById(ID)` : 엔티티 하나를 조회한다. 내부에서 `EntityManager.find()`가 발생한다.
-	* `getOne(ID)` : 엔티티를 프록시로 조회한다. 내부에서 `EntityManager.getReference()`가 발생한다.
-	* `findAll()` : 모든 엔티티를 조회한다. 정렬이나 페이징 조건을 파라미터로 제공할 수 있다.
+
+* `save(S)` : 새로운 엔티티는 저장하고 이미 존재하는 엔티티는 병합한다.
+* `delete(T)` : 엔티티를 삭제한다. 내부에서 `EntityManager.remove()`가 발생한다.
+* `findById(ID)` : 엔티티 하나를 조회한다. 내부에서 `EntityManager.find()`가 발생한다.
+* `getOne(ID)` : 엔티티를 프록시로 조회한다. 내부에서 `EntityManager.getReference()`가 발생한다.
+* `findAll()` : 모든 엔티티를 조회한다. 정렬이나 페이징 조건을 파라미터로 제공할 수 있다.
 
 ### `Spring Data JPA`의 구현체 `SimpleJpaRepository`
 `Spring Data JPA`가 제공하는 공통 인터페이스의 구현체는 `org.springframework.data.jpa.repository.support.SimpleJpaRepository`이다. 
@@ -51,8 +52,9 @@ public interface MemberRepository extends JpaRepository<Member, Long>
 
 ### `Spring Data JPA`의 `save()` 메서드
 `Spring Data JPA`는 `save()` 메서드를 통해 저장과 병합을 모두 진행한다. `save()` 메서드를 통해 넘어온 엔티티가 새로운 엔티티이면 `persist`, 새로운 엔티티가 아니면 `merge`한다. 이 때, `Spring Data JPA`가 새로운 엔티티인지 판단하는 기준은 다음과 같다.
-	- 식별자가 객체일 때 `null` -> 새로운 엔티티로 본다.
-	- 식별자가 자바 기본 타입일 때 `0` -> 새로운 엔티티로 본다.
+
+- 식별자가 객체일 때 `null` -> 새로운 엔티티로 본다.
+- 식별자가 자바 기본 타입일 때 `0` -> 새로운 엔티티로 본다.
 
 만약 새로운 엔티티를 저장하고자 할 때, 엔티티의 식별자 생성 전략이 `@GenerateValue`로 자동 생성이면 `save()` 호출 시점에 식별자가 없기 때문에 새로운 엔티티로 인식해서 `persist`한다. 하지만 `@Id`만을 사용하여 식별자 직접 할당이면 `save()` 호출 시점에 새로운 엔티티에 식별자 값이 있는 상태가 된다. 이 경우, `Spring Data JPA`는 엔티티에 식별자가 있기 때문에 `merge`하게 된다. `merge()`는 DB에 먼저 데이터가 있는지 확인하고, DB에 값이 없다면 새로운 엔티티로 인지하여 저장한다. 이는 검색 -> 삽입이 되기 때문에 비효율적이다.
 이러한 경우, 엔티티에서 `Persistable` 인터페이스를 구현하여 새로운 엔티티 확인 여부를 판단하는 로직을 직접 구현해주면 된다. 아래는 `@CreatedDate`를 통한 등록시간 정보를 활용하여 새로운 엔티티인지 확인할 수 있는 로직을 작성한 예이다.
@@ -185,10 +187,11 @@ em.createQuery("select count(m) from Member m where m.age = :age", Long.class)
 
 ### `Spring Data JPA` 페이징 API
 반면 `Spring Data JPA`는 아래와 같은 페이징을 위한 API를 제공한다.
-	- `org.springframework.data.domain.Sort` : 정렬 조건
-	- `org.springframework.data.domain.Pageable` : 페이징 조건을 담는다. 내부에 Sort 포함
-	- `org.springframework.data.domain.Page` : 추가 count 쿼리 결과를 포함한 페이징 결과를 담는다.
-	- `org.springframework.data.domain.Slice` : 추가 count 쿼리 없이 다음 페이지만 확인 가능. (내부적으로 limit + 1)
+	
+- `org.springframework.data.domain.Sort` : 정렬 조건
+- `org.springframework.data.domain.Pageable` : 페이징 조건을 담는다. 내부에 Sort 포함
+- `org.springframework.data.domain.Page` : 추가 count 쿼리 결과를 포함한 페이징 결과를 담는다.
+- `org.springframework.data.domain.Slice` : 추가 count 쿼리 없이 다음 페이지만 확인 가능. (내부적으로 limit + 1)
 
 `Pageable`은 인터페이스로 직접 페이징 조건을 전달하려면 구현체가 필요하다. 이 때, `PageRequest`를 이용하면 된다.
 ```java
@@ -255,10 +258,10 @@ List<Member> findByUsername(String username);
 ## 사용자 정의 기능 추가
 특정한 이유로 JPA의 `EntityManager`를 직접 사용하거나 `JdbcTemplate`, `QueryDsl` 등을 사용하여 `Repository`의 메서드를 직접 구현해야 할 수도 있다. 이 때, `JpaRepository` 인터페이스를 직접 구현해야 한다면 구현해야 할 기능이 너무 많다. `Spring Data JPA`는 이를 위해 다음과 같은 방법을 제공한다.
 
-	1. 사용자 정의 인터페이스를 생성한다. ex) `MemberRepositoryCustom`
-	2. 사용자 정의 인터페이스를 구현한 클래스를 작성한다. ex) `MemberRepositoryCustomImpl`
-	3. `JpaRepository`와 사용자 정의 인터페이스를 상속받은 `Repository` 인터페이스를 작성한다. ex) `MemberRepository`
-		- 이 때, 사용자 정의 인터페이스를 구현한 클래스의 이름이 `사용자 정의 인터페이스 이름 + Impl` 또는 `Repository 이름 + Impl` 이라면, `Spring Data JPA`가 이를 인식하여 스프링 빈으로 등록한다.
+1. 사용자 정의 인터페이스를 생성한다. ex) `MemberRepositoryCustom`
+2. 사용자 정의 인터페이스를 구현한 클래스를 작성한다. ex) `MemberRepositoryCustomImpl`
+3. `JpaRepository`와 사용자 정의 인터페이스를 상속받은 `Repository` 인터페이스를 작성한다. ex) `MemberRepository`
+	- 이 때, 사용자 정의 인터페이스를 구현한 클래스의 이름이 `사용자 정의 인터페이스 이름 + Impl` 또는 `Repository 이름 + Impl` 이라면, `Spring Data JPA`가 이를 인식하여 스프링 빈으로 등록한다.
 
 1. 사용자 정의 인터페이스 생성
 ```java
@@ -295,10 +298,12 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
 순수 JPA에서는 등록, 수정일 등의 공통 정보를 `MappedSuperclass`로 생성하고, `@PrePersist`, `@PostPersist`, `@PreUpdate`, `@PostUpdate`와 같은 JPA 이벤트 어노테이션을 통해 해당 내용을 생성, 수정하여 저장할 수 있다.
 
 `Spring Data JPA`는 위 과정을 좀 더 편리하게 작성할 수 있는 방법을 제공한다.
-	- 스프링부트 설정 클래스에 `@EnableJpaAuditing` 애노테이션을 붙여 `Auditing` 기능을 활성화 한다.
-	- 엔티티의 원하는 컬럼에 `@CreatedDate`, `@LastModifiedDate`, `@CreatedBy`, `@LastModifiedBy` 애노테이션을 사용하여 어떤 이벤트에 어떤 컬럼을 수정할 것인지 지정한다.
-	- `Auditing`을 적용할 엔티티 클래스에 `@EntityListeners(AuditingEntityListener.class)` 애노테이션을 사용하여 이벤트를 적용할 수 있도록 한다.
-	- 등록자, 수정자의 경우 이를 처리해주는 `AuditorAware`를 스프링 빈으로 등록해야 한다.
+
+- 스프링부트 설정 클래스에 `@EnableJpaAuditing` 애노테이션을 붙여 `Auditing` 기능을 활성화 한다.
+- 엔티티의 원하는 컬럼에 `@CreatedDate`, `@LastModifiedDate`, `@CreatedBy`, `@LastModifiedBy` 애노테이션을 사용하여 어떤 이벤트에 어떤 컬럼을 수정할 것인지 지정한다.
+- `Auditing`을 적용할 엔티티 클래스에 `@EntityListeners(AuditingEntityListener.class)` 애노테이션을 사용하여 이벤트를 적용할 수 있도록 한다.
+- 등록자, 수정자의 경우 이를 처리해주는 `AuditorAware`를 스프링 빈으로 등록해야 한다.
+
 ```java
 @Bean
 public AuditorAware<String> auditorProvider() {
@@ -306,7 +311,7 @@ public AuditorAware<String> auditorProvider() {
 }
 ```
 
-	- 공통 정보를 별도 클래스에 작성하고 `@MappedSuperclass` 애노테이션을 통해 필요한 엔티티에 적용할 수도 있다. 등록일, 수정일은 모든 엔티티에 적용해야 하고 등록자, 수정자 정보는 특정 엔티티들만 필요하다면 다음과 같이 분리해서 필요한 엔티티에 필요한 정보만을 적용할 수도 있다.
+- 공통 정보를 별도 클래스에 작성하고 `@MappedSuperclass` 애노테이션을 통해 필요한 엔티티에 적용할 수도 있다. 등록일, 수정일은 모든 엔티티에 적용해야 하고 등록자, 수정자 정보는 특정 엔티티들만 필요하다면 다음과 같이 분리해서 필요한 엔티티에 필요한 정보만을 적용할 수도 있다.
 ```java
 @Getter
 @MappedSuperclass
@@ -418,10 +423,10 @@ public String list(
 
 ## 기타
 기타 다음과 같은 기능들도 제공한다.
-	- Specifications(명세)
-	- Query By Example
-	- Projections
-	- Native Query
+- Specifications(명세)
+- Query By Example
+- Projections
+- Native Query
 
 ### Projections
 `Projections` 기능은 엔티티 대신에 DTO를 편리하게 조회할 때 사용한다. 만약 전체 엔티티가 아니라 엔티티의 특정 필드만 조회하고 싶다면 조회할 엔티티의 필드를 `getter` 형식으로 지정하면 해당 필드만 선택해서 조회할 수 있다. 이를 `Projection` 이라고 한다.
