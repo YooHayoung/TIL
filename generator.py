@@ -18,7 +18,7 @@ def readFolder(path, level, prevDir):
         prefixk = ''
         for i in range(1, level):
             prefixk = prefixk + '  '
-        f.write(prefixk + '- [***' + dirName + '***]' + '(' + prevDir + '/' + dirName + ')' + '\n\n')
+        f.write(prefixk + '- [***' + dirName + '***]' + '(' + pathRoot + ')' + '\n\n')
     listdir = sorted(os.listdir(path))
     dir_list = [dir for dir in listdir if not dir.__contains__('.')]
     for idx, dir in enumerate(dir_list):
