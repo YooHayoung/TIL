@@ -1,0 +1,33 @@
+name: Build README
+on:
+  push:
+    branches:
+    - main
+    paths-ignore:
+    - README.md
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3 # checkout
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v3 # setup-python
+      with:
+        python-version: "3.8" # 3.8버전 파이썬 사용
+    #- name: Install dependencies # 1) 스크립트에 필요한 dependency 설치
+    #  run: |
+    #    python -m pip install --upgrade pip
+    #    pip install python-leetcode 
+    - name: Run generator.py # 2) update-readme.py 실행
+      run: |
+        python generator.py
+    - name: Commit changes # 3) 추가된 파일 commit
+      run: |
+        git config --global user.name 'YooHaYoung' # 유저명
+        git config --global user.email 'yoo971202@naver.com' # 유저 이메일
+        git add -A
+        git commit -am "auto-update README.md" # 커밋 메시지
+    - name: Push changes # 4) master에 푸시
+      run: |
+        git push
+출처: https://holika.tistory.com/entry/Git-github-actions로-READMEmd-자동생성하기 [Uing? Uing!!:티스토리]
