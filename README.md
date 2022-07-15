@@ -1,46 +1,54 @@
 # TIL
 > Today I Learned
 
-Yoo Hayoung's [TIL collection][1].
+Yoo Hayoung's [TIL collection](https://github.com/YooHayoung/TIL).
 
-
-_7 TILs and counting..._
+*20 TILs and counting...*
 
 ---
 
-### 3 most recent TILs
 
-- [Querydsl](Spring_Data/Querydsl.md) - Wed Jul 13 20:41:43 2022 +0900
-- [Effective Java](JAVA/Effective_Java.md) - Sun Jul 10 14:20:35 2022 +0900
-- [스프링 공부 내용 요약](Study/Spring_MVC_내용_요약.md) - Sun May 29 13:09:10 2022 +0900
+### [***ETC***](ETC)
 
-### Categories
+  - [AWS 배포하기](/home/runner/work/TIL/TIL/ETC/AWS_배포하기.md)
 
-- [ETC](#ETC)
-- [JAVA](#JAVA)
-- [Spring_Data](#Spring_Data)
-- [Study](#Study)
-- [정리할것](#정리할것)
+### [***JAVA***](JAVA)
 
-### [ETC](ETC)
-- [AWS 배포하기](ETC/AWS_배포하기.md)
+  - [Effective Java](/home/runner/work/TIL/TIL/JAVA/Effective_Java.md)
+  - [JAVA](/home/runner/work/TIL/TIL/JAVA/JAVA.md)
 
-### [JAVA](JAVA)
-- [Effective Java](JAVA/Effective_Java.md)
-- [JAVA](JAVA/JAVA.md)
+### [***Spring***](Spring)
 
-### [Spring](Spring)
-- [basic](Spring/basic)
+  - [***asdbasic***](/home/runner/work/TIL/TIL/Spring/basic)
 
-### [Spring_Data](#Spring_Data)
-- [Querydsl](Spring_Data/Querydsl.md)
+    - [Spring bean](/home/runner/work/TIL/TIL/Spring/basic/Spring-bean.md)
+    - [Spring web mvc](/home/runner/work/TIL/TIL/Spring/basic/Spring-web-mvc.md)
+    - [Spring 핵심원리](/home/runner/work/TIL/TIL/Spring/basic/Spring-핵심원리.md)
 
-### [Study](Study)
-- [스프링 공부 내용 요약](Study/Spring_MVC_내용_요약.md)
-- [로그](Study/로그.md)
+  - [***asddb-access***](/home/runner/work/TIL/TIL/Spring/db-access)
 
-### [정리할것](정리할것)
-- [temp](정리할것/Learned.md)
+    - [JPA 핵심 이론](/home/runner/work/TIL/TIL/Spring/db-access/JPA-핵심-이론.md)
+    - [Querydsl](/home/runner/work/TIL/TIL/Spring/db-access/Querydsl.md)
+    - [Spring DB](/home/runner/work/TIL/TIL/Spring/db-access/Spring-DB.md)
+    - [Spring Data JPA](/home/runner/work/TIL/TIL/Spring/db-access/Spring-Data-JPA.md)
 
-[1]: https://github.com/YooHayoung/TIL
+  - [***asdmvc***](/home/runner/work/TIL/TIL/Spring/mvc)
+
+    - [API 예외처리](/home/runner/work/TIL/TIL/Spring/mvc/API-예외처리.md)
+    - [ArgumentResolver](/home/runner/work/TIL/TIL/Spring/mvc/ArgumentResolver.md)
+    - [Thymeleaf](/home/runner/work/TIL/TIL/Spring/mvc/Thymeleaf.md)
+    - [Validation](/home/runner/work/TIL/TIL/Spring/mvc/Validation.md)
+    - [로그인 처리](/home/runner/work/TIL/TIL/Spring/mvc/로그인-처리.md)
+    - [스프링 타입 컨버터](/home/runner/work/TIL/TIL/Spring/mvc/스프링-타입-컨버터.md)
+    - [예외 처리](/home/runner/work/TIL/TIL/Spring/mvc/예외-처리.md)
+
+### [***Study***](Study)
+
+  - [Spring MVC 내용 요약](/home/runner/work/TIL/TIL/Study/Spring_MVC_내용_요약.md)
+  - [로그](/home/runner/work/TIL/TIL/Study/로그.md)
+
+### [***정리할것***](정리할것)
+
+  - [Learned](/home/runner/work/TIL/TIL/정리할것/Learned.md)
+
 
