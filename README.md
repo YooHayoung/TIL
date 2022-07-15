@@ -19,20 +19,20 @@ Yoo Hayoung's [TIL collection](https://github.com/YooHayoung/TIL).
 
 ### [***Spring***](Spring)
 
-  - [***basic***](/Spring/basic/basic)
+  - [***basic***](/Spring/basic)
 
     - [Spring bean](/Spring/basic/Spring-bean.md)
     - [Spring web mvc](/Spring/basic/Spring-web-mvc.md)
     - [Spring 핵심원리](/Spring/basic/Spring-핵심원리.md)
 
-  - [***db-access***](/Spring/db-access/db-access)
+  - [***db-access***](/Spring/db-access)
 
     - [JPA 핵심 이론](/Spring/db-access/JPA-핵심-이론.md)
     - [Querydsl](/Spring/db-access/Querydsl.md)
     - [Spring DB](/Spring/db-access/Spring-DB.md)
     - [Spring Data JPA](/Spring/db-access/Spring-Data-JPA.md)
 
-  - [***mvc***](/Spring/mvc/mvc)
+  - [***mvc***](/Spring/mvc)
 
     - [API 예외처리](/Spring/mvc/API-예외처리.md)
     - [ArgumentResolver](/Spring/mvc/ArgumentResolver.md)
