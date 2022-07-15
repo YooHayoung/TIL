@@ -6,7 +6,7 @@ rootPath = os.getcwd()
 level = 0
 fileCount = 0
 
-f = open(rootPath + '/' + "test.md", 'w')
+f = open(rootPath + '/' + "README.md", 'w')
 
 def readFolder(path, level, prevDir):
     pathRoot = prevDir
