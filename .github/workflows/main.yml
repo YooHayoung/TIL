@@ -30,4 +30,3 @@ jobs:
     - name: Push changes # 4) master에 푸시
       run: |
         git push
-출처: https://holika.tistory.com/entry/Git-github-actions로-READMEmd-자동생성하기 [Uing? Uing!!:티스토리]
