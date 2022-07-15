@@ -1,10 +1,10 @@
 # Querydsl
-[1. Querydsl 설명](bear://x-callback-url/open-note?id=62F577B2-BDCF-483B-B0B9-71C1BAC95547-798-00000275EF26AE37&header=Querydsl%20%EC%84%A4%EB%AA%85)
-[2. Querydsl 설정](bear://x-callback-url/open-note?id=62F577B2-BDCF-483B-B0B9-71C1BAC95547-798-00000275EF26AE37&header=Querydsl%20%EC%84%A4%EC%A0%95)
-[3. Q Type 파일 생성](bear://x-callback-url/open-note?id=62F577B2-BDCF-483B-B0B9-71C1BAC95547-798-00000275EF26AE37&header=Q%20Type%20%ED%8C%8C%EC%9D%BC%20%EC%83%9D%EC%84%B1)
-[4. Querydsl 적용](bear://x-callback-url/open-note?id=62F577B2-BDCF-483B-B0B9-71C1BAC95547-798-00000275EF26AE37&header=Querydsl%20%EC%A0%81%EC%9A%A9)
-[5. Querydsl 문법](bear://x-callback-url/open-note?id=62F577B2-BDCF-483B-B0B9-71C1BAC95547-798-00000275EF26AE37&header=Querydsl%20%EB%AC%B8%1D%EB%B2%95)
-[6. JPA와 QueryDSL](bear://x-callback-url/open-note?id=62F577B2-BDCF-483B-B0B9-71C1BAC95547-798-00000275EF26AE37&header=JPA%EC%99%80%20QueryDSL)
+[1. Querydsl 설명](#querydsl-설명)
+[2. Querydsl 설정](#querydsl-설정)
+[3. Q Type 파일 생성](#q-type-파일-생성)
+[4. Querydsl 적용](#querydsl-적용)
+[5. Querydsl 문법](#querydsl-문법)
+[6. JPA와 QueryDSL](#jpa와-querydsl)
 
 ## Querydsl 설명
 기존 JPQL이나 쿼리를 직접 작성하는 방식에서 쿼리는 문자이기 때문에 해당 쿼리가 실행되기 전 까지는 작동 여부를 확인할 수 없다. 쿼리에 바인딩되는 타입의 체크도 불가능하다. 이 방식은 오류를 런타임에 잡을 수 있는 것이다. 타입 체크가 불가능하기 때문에 동적 쿼리를 작성하기 어렵다는 단점이 있다. 이러한 문제를 해결하기위해 QueryDSL이 등장했다.
@@ -82,9 +82,10 @@ clean {
 엔티티 또는 프로젝션 작성 후, `querydsl`을 컴파일하여 `APT`를 통해 엔티티와 프로젝션에 대한 `Qxxx` 파일을 생성해야 한다. Q 타입 파일을 생성하는 방법은 다음과 같다.
 
 #### Gradle을 통해서 빌드할 때
-	* Gradle -> Tasks -> build -> clean
-	* Gradle -> Tasks -> other -> compileQuerydsl
-	* Gradle 콘솔을 사용한다면 `./gradlew clean compileQuerydsl` 명령어를 통해 가능하다.
+* Gradle -> Tasks -> build -> clean
+* Gradle -> Tasks -> other -> compileQuerydsl
+* Gradle 콘솔을 사용한다면 `./gradlew clean compileQuerydsl` 명령어를 통해 가능하다.
+
 Gradle을 통해 빌드하게되면 `/build/generated/sources/annotationProcessor/java/main` 하위에 Q 타입 파일이 생성된다.
 
 #### IntelliJ를 통해서 빌드할 때
@@ -208,10 +209,10 @@ public void test() {
 ### 정렬
 `.orderBy()` 메서드 체인을 통해 검색 결과를 정렬할 수 있다.
 
-	* `desc()` : 내림차순 정렬.
-	* `asc()` : 오름차순 정렬.
-	* `nullsLast()` : null 데이터를 마지막으로 정렬한다.
-	* `nullsFirst()` : null 데이터를 처음에 정렬한다.
+* `desc()` : 내림차순 정렬.
+* `asc()` : 오름차순 정렬.
+* `nullsLast()` : null 데이터를 마지막으로 정렬한다.
+* `nullsFirst()` : null 데이터를 처음에 정렬한다.
 
 ```java
 .where(...)
@@ -222,11 +223,11 @@ public void test() {
 ### 결과 조회
 QueryDsl에서 쿼리문의 결과를 조회하기 위한 메서드는 다음과 같다.
 
-	* `fetch()` : 리스트를 조회한다. 데이터가 없으면 빈 리스트를 반환한다.
-	* `fetchOne()` : 단건 조회시 사용한다. 결과가 없으면 `null`을 반환하고, 둘 이상이면 `NonUniqueResultException` 발생한다.
-	* `fetchFirst()` : `limit(1).fetchOne()`과 같은 결과이다. 검색 결과의 처음 한 건을 결과로 반환한다.
-	* `fetchResults()` : 페이징 정보를 포함한다. total count 쿼리가 추가 실행된다 <- 미지원
-	* `fetchCount()` : count 쿼리로 변경해서 count 수를 조회한다. <- 미지원. `fetchOne()`을 통해 count 쿼리 실행할 수 있다.
+* `fetch()` : 리스트를 조회한다. 데이터가 없으면 빈 리스트를 반환한다.
+* `fetchOne()` : 단건 조회시 사용한다. 결과가 없으면 `null`을 반환하고, 둘 이상이면 `NonUniqueResultException` 발생한다.
+* `fetchFirst()` : `limit(1).fetchOne()`과 같은 결과이다. 검색 결과의 처음 한 건을 결과로 반환한다.
+* `fetchResults()` : 페이징 정보를 포함한다. total count 쿼리가 추가 실행된다 <- 미지원
+* `fetchCount()` : count 쿼리로 변경해서 count 수를 조회한다. <- 미지원. `fetchOne()`을 통해 count 쿼리 실행할 수 있다.
 
 > **fetchResult(), fetchCount() 미지원**. count 쿼리 별도로 작성하여 페이징 필요.  
 
@@ -344,10 +345,10 @@ queryFactroy
 
 
 ### 조인
-[조인 - 기본 조인](bear://x-callback-url/open-note?id=62F577B2-BDCF-483B-B0B9-71C1BAC95547-798-00000275EF26AE37&header=%EA%B8%B0%EB%B3%B8%20%EC%A1%B0%EC%9D%B8)
-[조인 - 세타 조인](bear://x-callback-url/open-note?id=62F577B2-BDCF-483B-B0B9-71C1BAC95547-798-00000275EF26AE37&header=%EC%84%B8%ED%83%80%20%EC%A1%B0%EC%9D%B8)
-[조인 - ON 절](bear://x-callback-url/open-note?id=62F577B2-BDCF-483B-B0B9-71C1BAC95547-798-00000275EF26AE37&header=ON%20%EC%A0%88)
-[조인 - fetch 조인](bear://x-callback-url/open-note?id=62F577B2-BDCF-483B-B0B9-71C1BAC95547-798-00000275EF26AE37&header=fetch%20%EC%A1%B0%EC%9D%B8)
+[조인 - 기본 조인](#기본-조인)
+[조인 - 세타 조인](#세타-조인)
+[조인 - ON 절](#on-절)
+[조인 - fetch 조인](#fetch-조인)
 
 #### 기본 조인
 조인은 조인 메서드에 파라미터로 조인 대상과, 별칭으로 사용할 Q 타입을 지정하여 사용할 수 있다.
