@@ -22,7 +22,7 @@ jobs:
       run: |
         python generator.py
     - name: Commit changes # 3) 추가된 파일 commit
-      if: git.status != ''
+      continue-on-error: true
       run: |
         git config --global user.name 'YooHaYoung' # 유저명
         git config --global user.email 'yoo971202@naver.com' # 유저 이메일
