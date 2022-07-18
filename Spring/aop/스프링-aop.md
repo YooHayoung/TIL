@@ -1,17 +1,14 @@
 # 스프링 AOP
-[스프링 AOP - AOP 설명](#aop-설명)
+[1. AOP 설명](#aop-설명)
 
-[스프링 AOP - 스프링 AOP 핵심 원리](#스프링-aop-핵심-원리)
+[2. 스프링 AOP 핵심 원리](#스프링-aop-핵심-원리)
 
-  - [스프링 AOP - 빈 후처리기](#빈-후처리기)
+  - [2.1. 빈 후처리기](#빈-후처리기)
 
-  - [스프링 AOP - 프록시](#프록시)
+  - [2.2. Advisor](#advisor)
 
-  - [스프링 AOP - 동적 프록시](#동적-프록시)
+  - [2.3. 프록시](#프록시)
 
-  - [스프링 AOP - 프록시 팩토리](#프록시-팩토리)
-    
-  - [스프링 AOP - Advisor](#advisor)
 
 
 
@@ -45,38 +42,165 @@ AOP에서 사용하는 용어는 다음과 같다.
 - `Advisor` : 스프링 AOP에서만 사용되는 용어로 하나의 `Advice`와 하나의 `Pointcut`으로 구성된다.
 
 
+[처음으로](#스프링-aop)
+
 
 ## 스프링 AOP 핵심 원리
 스프링 AOP를 통해 핵심 로직에 부가 기능 로직을 추가하는 과정은 다음과 같다.
 
-1. 빈 후처리기가 스프링 빈으로 등록할 객체를 전달받아 프록시 팩토리에게 해당 객체를 프록시 객체로 변환을 요청한다.
-2. 프록시 팩토리는 전달받은 객체가 프록시를 적용해도 되는지, 어떤 기능의 프록시를 적용할 지 `advisor`를 통해 판단하여 원본 객체를 대상으로 한 프록시를 반환한다.
-3. 빈 후처리기는 반환받은 프록시 객체를 원본 객체 대신에 스프링 빈으로 등록한다.
+1. 스프링 컨테이너 시작
+2. 스프링 빈으로 등록할 객체를 생성하고 빈 후처리기에 전달한다.
+3. 빈 후처리기는 컨테이너에서 `Advisor` 빈을 모두 조회한다.
+4. 빈 후처리기는 `@Aspect` 애노테이션이 붙은 빈을 모두 조회하여 `@Aspect Advisor` 빌더에게 전달한다.
+	- `@Aspect Advisor` 빌더는 `@Aspect` 애노테이션 정보를 기반으로 `Advisor`를 생성한다.
+	- 이후 생성한 `Advisor`를  `@Aspect Advisor` 빌더 내부에 저장해둔다.
+5. 빈 후처리기는 `@Aspect Advisor` 빌더에서 내부에 저장된 `Advisor`를 모두 조회한다.
+6. 빈 후처리기는 조회한 `Advisor` 내부의 `Pointcut`을 사용하여 스프링 빈으로 등록할 객체가 프록시 적용 대상인지 판단한다. 프록시 적용 대상이라면 `Advisor` 내부의 `Advice`를 적용한 프록시를 생성하고 이를 반환한다. 프록시 적용 대상이 아니면 기존 객체를 반환한다.
+7. 스프링 컨테이너는 반환받은 객체를 스프링 빈으로 등록한다.
+
 
 ### 빈 후처리기
 빈 후처리기(`BeanPostProcessor`)는 빈을 조작하고 변경할 수 있다. 빈을 생성하고 생성된 빈을 등록하기 직전에 어떤 작업을 처리하여 빈을 조작하거나 변경할 수 있다. 빈 후처리기를 사용하려면 `BeanPostProcessor` 인터페이스를 구현하고, 이를 스프링 빈으로 등록하면 된다.
 
 스프링 AOP는 빈 후처리기를 통해 부가 기능 로직 추가를 원하는 빈을 프록시 객체로 바꿔치기하여 이를 스프링 빈에 등록한다. 스프링 AOP는 `AnnotationAwareAspectJAutoProxyCreator`라는 빈 후처리기를 제공하고 스프링부트는 이를 자동으로 스프링 빈으로 등록한다.
 
-`AnnotationAwareAspectJAutoProxyCreator`는 자동으로 프록시를 생성해주는 빈 후처리기이다. 이는 스프링 빈으로 등록된 `Advisor`들을 자동으로 찾아서 프록시가 필요한 곳에 자동으로 프록시를 적용해준다. 자동 프록시 생성기의 작동 과정은 다음과 같다.
+`AnnotationAwareAspectJAutoProxyCreator`는 자동으로 프록시를 생성해주는 빈 후처리기이다. 이는 스프링 빈으로 등록된 `Advisor`들을 자동으로 찾아서 프록시가 필요한 곳에 자동으로 프록시를 적용해준다. 
+또한 자동 프록시 생성기는 스프링 컨테이너에서 `@Aspect` 애노테이션이 붙은 빈을 찾아서 `@Aspect Advisor` 빌더를 통해 `@Aspect` 애노테이션 정보를 기반으로 `Advisor`를 만들고 이를 빌더 내부에 저장한다. 이렇게 생성된 `Advisor`들도 자동 프록시 생성기에서 조회하여 프록시 적용에 사용한다.
+
+자동 프록시 생성기의 작동 과정은 다음과 같다.
 
 1. 스프링이 스프링 빈 대상이 되는 객체를 생성하여 빈 후처리기(`AnnotationAwareAspectJAutoProxyCreator`)에 전달한다.
-2. 빈 후처리기(자동 프록시 생성기)는 스프링 컨테이너에서 `Advisor`들을 조회하여 `Advisor` 내부에 포함된 `Pointcut`을 통해 프록시를 적용할 대상인지 판단한다.
-3. 프록시 적용 대상이라면 프록시를 생성하고 이를 반환하고 적용 대상이 아니면 원본 객체를 반환한다.
-4. 반환받은 객체(프록시 또는 원본 객체)를 스프링 빈으로 등록한다.
+2. 빈 후처리기(자동 프록시 생성기)는 스프링 컨테이너에 등록된 `@Aspect` 애노테이션이 붙은 빈을 모두 조회하여 `@Aspect Advisor` 빌더를 통해 `Advisor`를 생성하고 빌더 내부에 생성된 `Advisor`를 저장한다.
+3. 자동 프록시 생성기는 `@Aspect Advisor` 빌더 내부에 저장된 `Advisor`를 모두 조회한다.
+4. 자동 프록시 생성기는 스프링 컨테이너에 등록된 `Advisor` 빈을 모두 조회한다.
+5. 조회한 `Advisor` 내부에 포함된 `Pointcut`을 통해 스프링 빈으로 등록할 객체가 프록시를 적용할 대상인지 판단한다.
+6. 프록시 적용 대상이라면 프록시를 생성하고 이를 반환하고 적용 대상이 아니면 원본 객체를 반환한다.
+7. 반환받은 객체(프록시 또는 원본 객체)를 스프링 빈으로 등록한다.
+
+
+### Advisor
+`Advisor`는 1개의 `Advice`와 1개의 `Pointcut`을 묶어둔 것을 말한다.
+`Advice`는 프록시에 적용할 부가 기능 로직을 말한다.
+`Pointcut`은 어떤 객체에 프록시를 적용할지 적용하지 않을지 판단하는 필터링 로직이다. 주로 클래스 이름과 메서드 이름으로 필터링한다.
+따라서 `Advisor`는 어디에 어떤 로직을 적용해야 할 지 알고있는 객체로 볼 수 있다.
+
+> 만약 하나의 객체에 여러 `Advisor`가 필터링 될 수 있다. 이때, 여러 프록시가 생성되는 것이 아니라 여러 `Advisor`가 적용된 하나의 프록시 객체만을 생성한다.
+
+개발자는 프록시에 어떤 로직을 적용하고, 프록시를 적용할 대상을 필터링하기 위해서 `Advice`와 `Pointcut`을 구현하고 이를 기반으로 `Advisor`를 생성하여 빈으로 등록만 하면 된다.
+스프링 AOP는 `Advisor`를 편리하게 구현할 수 있도록 `@Aspect` 애노테이션을 제공한다. `@Aspect` 애노테이션이 붙은 클래스에 다음과 같이 작성하면 `@Aspect Advisor` 빌더를 통해 `Advisor`를 생성할 수 있다.
+
+- `@Aspect`를 이용하여 `Advisor`를 작성하는 예시
+```java
+@Aspect
+public class CustomAspect {
+	// @Around는 Pointcut이 된다. Aspectj 표현식을 사용한다.
+	// 포인트컷을 위한 다른 애노테이션이 더 있다.
+	@Around("execution(* com.exam.hello..*(..))")
+	public Object execute(ProceedingJoinPoint joinPoint) throws Throwable {
+		// 메서드는 Advice가 된다.
+		// Advice 로직
+
+		// 기존 로직 호출
+		Object result = joinPoint.proceed();
+		// 기존 로직 호출 결과 반환.
+		return result;
+	}
+}
+```
+
+
+`Advisor`를 직접 생성하고 빈으로 등록하려면 `org.aopalliance.intercept.MethodInterceptor` 인터페이스를 구현하여 `Advice`를 만들고, `org.springframework.aop.Pointcut` 인터페이스를 구현하여 `Pointcut`을 만들어 `Advisor`를 만들 수 있다. 이렇게 생성한 `Advisor`를 스프링 빈으로 등록하면 된다.
+
+- `Advice`와 `Pontcut`을 직접 구현하고 `Advisor`를 생성하여 스프링 빈으로 등록하는 예시.
+```java
+// Advice를 정의한다.
+public class CustomAdvice implements MethodInterceptor {
+
+    @Override
+    public Object invoke(MethodInvocation invocation) throws Throwable {
+        // 추가 기능 로직
+
+        // 실제 대상 target의 메서드 호출
+        Object result = invocation.proceed();
+
+        // 추가 기능 로직
+
+        return result;
+    }
+}
+
+// Advice를 적용할 대상을 필터링하는 Pointcut을 정의한다.
+public class CustomPointcut implements Pointcut {
+    @Override
+    public ClassFilter getClassFilter() {
+        // 클래스 정보를 필터링 한다.
+        // 로직 구현
+        return null;
+    }
+
+    @Override
+    public MethodMatcher getMethodMatcher() {
+        // CustomMethodMatcher 를 통해 메서드를 필터링 한다.
+        return new CustomMethodMatcher();
+    }
+    
+    static class CustomMethodMatcher implements MethodMatcher {
+
+        @Override
+        public boolean matches(Method method, Class<?> targetClass) {
+            // 메서드 정보를 통해 프록시를 적용할 메서드를 필터링한다.
+            // 매칭 로직 구현
+            return false;
+        }
+
+        @Override
+        public boolean isRuntime() {
+            // 반환값이 참이면 matches(... args) 메서드가 대신 호출된다. 
+            // 동적으로 넘어오는 매개변수를 판단 로직으로 사용할 수 있다.
+            // false를 반환하면 클래스의 정적 정보만을 사용하여 스프링이 내부에서 캐싱을 통해 성능 향상이 가능하다.
+            // true를 반환할 경우 매개변수가 동적으로 변경된다고 가정하기 때문에 캐싱하지 않는다.
+            return false;
+        }
+
+        @Override
+        public boolean matches(Method method, Class<?> targetClass, Object... args) {
+            // 매칭 로직 구현
+            return false;
+        }
+    }
+}
+
+public class CustomAdvisorConfig {
+	// CustomPointcut과 CustomAdvice를 통해 Advisor를 생성하고 이를 빈으로 등록한다.
+	@Bean
+	public Advisor customAdvisor() {
+		return new DefaultPointcutAdvisor(new CustomPointcut(), new CustomAdvice());
+	}
+}
+```
+
+> 스프링은 필요한 포인트컷을 대부분 제공한다. 따라서 위와 같이 직접 포인트컷을 만들지 않고 스프링이 제공하는 포인트컷을 사용해도 된다. 메서드 이름을 기반으로 매칭하는 `NameMatchMethodPointcut`, 애노테이션으로 매칭하는 `AnnotationMatchingPointcut`, aspectJ 표현식으로 매칭하는 `AspectJExpressionPointcut` 등과 기타 여러 포인트컷을 제공한다. 대부분 사용하기 편리하고 기능도 가장 많은 `AspectJExpressionPointcut`을 사용한다. `@Aspect`를 이용하여 `Advisor`를 작성하는 예시에서 `@Around("execution(.....)")` 애노테이션 부분에 `AspectJExpressionPointcut`을 사용했다.
+
+위 예시들과 같이 `Advisor`를 등록하면 빈 후처리기(자동 프록시 생성기)는 `Advisor`의 `Pointcut`을 통해 빈으로 등록할 대상을 필터링하여 `Advice`를 적용한 프록시 객체를 생성하여 반환하거나 기존 객체를 반환하고, 반환된 객체는 스프링 빈에 등록된다.
+
 
 ### 프록시
 프록시(Proxy)는 대리자라는 뜻으로 클라이언트가 사용하려고 하는 실제 대상을 대신하는 대리자가 클라이언트의 요청을 받아주는 역할을 한다. 이때, 클라이언트는 실제 대상에게 요청을 했는지, 프록시에게 요청을 했는지 몰라도 된다. 구체 클래스를 몰라도 된다는 뜻이다.
 
 프록시가 되려면 클라이언트가 요청한 실제 대상과 프록시가 같은 인터페이스를 사용해야 한다. 같은 인터페이스를 사용해야 요청을 보낸 클라이언트의 코드 변경 없이 DI를 통해 실제 대상 객체를 프록시 객체로 변경할 수 있다.
+자바에서는 다형성을 지원하기 때문에 상속이나 인터페이스 구현을 통해 프록시를 사용할 수 있다.
 
 프록시를 사용하면 권한에 따른 접근을 제어를 할 수 있고, 캐싱과 지연로딩이 가능하다. 또한 기존 대상이 제공하는 기능과 더불어 로깅이나 트랜잭션을 지원하는 등의 부가 기능을 수행하게 할 수도 있다. 접근 제어와 부가 기능 추가가 가능한 것이다.
 
-프록시를 적용하게 되면 프록시의 사용 목적에 따라 프록시 패턴과 데코레이터 패턴으로 구분할 수 있다. 접근 제어를 목적으로 프록시를 사용하면 프록시 패턴, 부가 기능 추가가 목적이면 데코레이터 패턴이다. 프록시 패턴과 데코레이터 패턴에 대한 자세한 내용은 디자인 패턴을 공부해보자.
+프록시를 적용하게 되면 프록시의 사용 목적에 따라 프록시 패턴과 데코레이터 패턴으로 구분할 수 있다. 접근 제어를 목적으로 프록시를 사용하면 프록시 패턴, 부가 기능 추가가 목적이면 데코레이터 패턴을 사용할 수 있다. 
 
-스프링 AOP는 AOP 적용을 원하는 객체를 편리하게 프록시로 변환하기 위해 프록시 팩토리를 사용하여 동적으로 프록시를 생성해준다.
+프록시 패턴 사용의 예를 들자면 JPA의 지연 로딩이 있다. JPA는 엔티티를 지연로딩 하면 내부에 캐시를 두어 접근 제어를 한다. 지연로딩으로 엔티티를 조회한 시점에는 프록시의 캐시에 아무런 데이터가 없다. 이후 해당 엔티티를 사용하면 그 때 조회 쿼리를 전송하고 엔티티의 캐시에 데이터를 보관해둔다. 엔티티 캐시에 데이터가 존재하는 시점부터는 더 이상 DB에 조회 쿼리를 전송하지 않는다.
 
-### 동적 프록시
+데코레이터 패턴 사용은 메서드 수행 시간을 측정하는 기능을 도입하는 것을 예로 들 수 있다. 기존 객체를 변경하지 않고 부가 기능을 추가하고 싶다면 기존 객체를 상속받거나 대상 객체의 인터페이스를 구현하고, 대상 객체를 주입받아 내부에서 기존 객체의 메서드를 호출하면 된다. 대상 객체의 메서드를 호출하는 곳에서 어떠한 부가 기능이라도 수행이 가능하다. 이제 이렇게 만든 프록시를 기존 객체 대신 사용하면 기존 객체의 코드는 변경 없이 부가 기능을 추가할 수 있다.
+
+> 프록시 패턴과 데코레이터 패턴에 대한 자세한 내용은 디자인 패턴을 공부해보도록 한다.
+
+#### 동적 프록시
 프록시 패턴과 데코레이터 패턴을 사용하여 프록시를 적용하면 기존 코드를 변경하지 않고도 부가 기능을 추가할 수 있다. 하지만 직접 프록시를 직접적으로 적용하려면 프록시 적용을 원하는 대상 수 만큼 프록시 클래스를 만들어야 한다는 문제가 있다. 이를 해결하기 위해 자바에서 제공하는 **JDK 동적 프록시 기술**이나 **CGLIB와 같은 프록시 생성 오픈소스 기술**을 활용할 수 있다. 이러한 동적 프록시 기술을 사용하면 프록시를 적용할 코드를 하나만 만들어 두고, 런타임에 프록시 객체를 동적으로 생성해준다.
 
 #### JDK 동적 프록시
@@ -167,75 +291,20 @@ public class CreateProxy {
 }
 ```
 
-이처럼 JDK 동적 프록시 기술과 CGLIB을 통해 인터페이스와 구체 클래스 기반으로 부가 기능을 가진 프록시를 생성할 수 있다. 스프링은 동적 프록시를 통합하여 편리하게 만들어주는 프록시 팩토리라는 기능을 제공한다.
+이처럼 JDK 동적 프록시 기술과 CGLIB을 통해 인터페이스와 구체 클래스 기반으로 부가 기능을 가진 프록시를 생성할 수 있다. 하지만 인터페이스와 구체 클래스에 대한 프록시의 틀을 분리하여 작성해야 한다. 이를 해결하기 위해 스프링은 동적 프록시를 통합하여 편리하게 만들어주는 프록시 팩토리라는 기능을 제공한다.
 
-### 프록시 팩토리
-스프링은 동적 프록시를 통합하여 편리하게 만들어주는 프록시 팩토리라는 기능을 제공한다. 프록시 팩토리는 인터페이스가 있으면 JDK 동적 프록시를 사용하여 프록시를 만들어주고, 구체 클래스만 있다면 CGLIB를 사용하여 프록시를 만들어준다. 
+#### 프록시 팩토리
+스프링은 동적 프록시를 통합하여 편리하게 만들어주는 프록시 팩토리라는 기능을 제공한다. 프록시 팩토리는 인터페이스가 있으면 JDK 동적 프록시를 사용하여 프록시를 만들어주고, 구체 클래스만 있다면 CGLIB를 사용하여 프록시를 만들어준다.
 
-스프링은 프록시에 부가 기능을 적용하기 위해 JDK 동적 프록시와 CGLIB에서 제공하는 `InvocationHandler`와 `MethodInterceptor` 대신에 `Advice`라는 새로운 개념을 도입했다. 또한 스프링은 특정 조건에 맞을 때만 프록시 부가 기능이 적용되도록 `Pointcut`이라는 개념을 도입하였다. 1개의 `Advice`와 1개의 `Pointcut`을 묶어서 `Advisor`라고 한다. 어디에 어떤 로직을 적용할 지 알고 있는 것이 `Advisor`이다. [스프링 AOP - Advisor](bear://x-callback-url/open-note?id=C015789D-DCFA-4F35-8E12-8055C2C5A06B-91801-000007A00A20BE7B&header=Advisor)
+프록시 팩토리에 `setProxyTargetClass(true)`를 통해 `ProxyTargetClass` 옵션을 사용하게 할 수 있다. 이는 인터페이스가 있어도 JDK 동적 프록시 기술을 사용하지 않고 CGLIB를 사용하여 구체 클래스 기반 프록시를 사용하게 하는 옵션이다.
 
-프록시 팩토리를 사용하면 `Advisor`를 필수로 지정해야 한다. `org.aopalliance.intercept.MethodInterceptor` 인터페이스를 구현하여 `Advice`를 만들 수 있다. `org.springframework.aop.Pointcut` 인터페이스를 구현하여 `Pointcut`을 만들 수 있다. 
-프록시를 생성하는 쪽에서 프록시 팩토리에 프록시를 적용할 대상 클래스를 넘겨주고, `Advice`와 `Pointcut`을 통해 `Advisor`를 만들고 `addAdvisor()`를 통해 이를 적용하면 `Pointcut`으로 필터링되고, `Advice`가 적용된 프록시를 반환받을 수 있다. `addAdvisor()`를 통해 여러 `Advisor`를 등록할 수도 있다. 이때, 여러 프록시가 생성되는 것이 아니라 하나의 프록시에 여러 어드바이저가 적용된다.
-프록시 팩토리에 `setProxyTargetClass(true)`를 통해 `ProxyTargetClass` 옵션을 사용하게 할 수 있다. 이는 인터페이스가 있어도 JDK 동적 프록시 기술을 사용하지 않고 CGLIB를 사용하여 구체 클래스 기반 프록시를 사용하게 하는 옵션이다. 스프링 부트는 AOP를 적용할 때 기본적으로 이 방법을 사용한다.
+스프링은 프록시에 부가 기능을 적용하기 위해 JDK 동적 프록시와 CGLIB에서 제공하는 `InvocationHandler`와 `MethodInterceptor` 대신에 `Advice`라는 새로운 개념을 도입했다. 또한 스프링은 특정 조건에 맞을 때만 프록시 부가 기능이 적용되도록 `Pointcut`이라는 개념을 도입하였다. 1개의 `Advice`와 1개의 `Pointcut`을 묶어서 `Advisor`라고 한다. 어디에 어떤 로직을 적용할 지 알고 있는 것이 `Advisor`이다. 프록시 팩토리를 사용하면 `Advisor`를 필수로 지정해야 한다. [Advisor 설명](#advisor)
 
+> 프록시 팩토리가 등장한 시점에는 프록시 자동 생성기가 없었다. 프록시 팩토리를 위해 `Advisor`가 등장하고, 이를 더욱 편리하게 이용할 수 있도록 프록시 자동 생성기가 등장하였다. 
+> 현시점에서 스프링 부트는 스프링 AOP에서 제공하는 빈 후처리기(자동 프록시 생성기)인 `AnnotationAwareAspectJAutoProxyCreator`를 사용하여 프록시를 생성한다. 프록시 팩토리를 사용하는 것은 아니지만, 프록시 팩토리와 비슷한 방법으로 프록시를 생성한다.
+
+- `ProxyFactory`와 `Advisor`를 통해 프록시를 생성하는 예
 ```java
-// Advice를 정의한다.
-public class CustomAdvice implements MethodInterceptor {
-
-    @Override
-    public Object invoke(MethodInvocation invocation) throws Throwable {
-        // 추가 기능 로직
-
-        // 실제 대상 target의 메서드 호출
-        Object result = invocation.proceed();
-
-        // 추가 기능 로직
-
-        return result;
-    }
-}
-
-// Advice를 적용할 대상을 필터링하는 Pointcut을 정의한다.
-public class CustomPointcut implements Pointcut {
-    @Override
-    public ClassFilter getClassFilter() {
-        // 클래스 정보를 필터링 한다.
-        // 로직 구현
-        return null;
-    }
-
-    @Override
-    public MethodMatcher getMethodMatcher() {
-        // CustomMethodMatcher 를 통해 메서드를 필터링 한다.
-        return new CustomMethodMatcher();
-    }
-    
-    static class CustomMethodMatcher implements MethodMatcher {
-
-        @Override
-        public boolean matches(Method method, Class<?> targetClass) {
-            // 메서드 정보를 통해 프록시를 적용할 메서드를 필터링한다.
-            // 매칭 로직 구현
-            return false;
-        }
-
-        @Override
-        public boolean isRuntime() {
-            // 반환값이 참이면 matches(... args) 메서드가 대신 호출된다. 
-            // 동적으로 넘어오는 매개변수를 판단 로직으로 사용할 수 있다.
-            // false를 반환하면 클래스의 정적 정보만을 사용하여 스프링이 내부에서 캐싱을 통해 성능 향상이 가능하다.
-            // true를 반환할 경우 매개변수가 동적으로 변경된다고 가정하기 때문에 캐싱하지 않는다.
-            return false;
-        }
-
-        @Override
-        public boolean matches(Method method, Class<?> targetClass, Object... args) {
-            // 매칭 로직 구현
-            return false;
-        }
-    }
-}
-
 // Proxy를 생성한다.
 public class CreateProxy {
     public void do() {
@@ -261,10 +330,6 @@ public class CreateProxy {
 ```
 
 
+[처음으로](#스프링-aop)
 
-### Advisor
-`Advice`는 프록시가 호출하는 부가 기능을 말한다. 프록시의 로직을 뜻하는 것이다.
-`Pointcut`은 `Advice`를 어디에 적용할 지, 어디에 `Advice`를 적용하지 않을지 판단하는 필터링 로직이다. 주로 클래스와 메서드 이름으로 필터링을 한다.
-1개의 `Advice`와 1개의 `Pointcut`을 묶어서 `Advisor`라고 한다. 어디에 어떤 로직을 적용할 지 알고 있는 것이 `Advisor`이다.
 
-스프링은 필요한 포인트컷을 대부분 제공한다. 메서드 이름을 기반으로 매칭하는 `NameMatchMethodPointcut`, 애노테이션으로 매칭하는 `AnnotationMatchingPointcut`, aspectJ 표현식으로 매칭하는 `AspectJExpressionPointcut` 등을 제공하고 기타 여러 포인트컷을 제공한다. 대부분 사용하기 편리하고 기능도 가장 많은 `AspectJExpressionPointcut`를 사용한다.
