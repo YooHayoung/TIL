@@ -3,7 +3,7 @@
 
 Yoo Hayoung's [TIL collection](https://github.com/YooHayoung/TIL).
 
-*21 TILs and counting...*
+*22 TILs and counting...*
 
 ---
 
@@ -21,7 +21,8 @@ Yoo Hayoung's [TIL collection](https://github.com/YooHayoung/TIL).
 
   - [***aop***](/Spring/aop)
 
-    - [스프링 aop](/Spring/aop/스프링-aop.md)
+    - [스프링 aop 적용방법](/Spring/aop/스프링-aop-적용방법.md)
+    - [스프링 aop 핵심원리](/Spring/aop/스프링-aop-핵심원리.md)
 
   - [***basic***](/Spring/basic)
 
