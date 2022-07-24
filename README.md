@@ -3,7 +3,7 @@
 
 Yoo Hayoung's [TIL collection](https://github.com/YooHayoung/TIL).
 
-*22 TILs and counting...*
+*24 TILs and counting...*
 
 ---
 
@@ -16,6 +16,8 @@ Yoo Hayoung's [TIL collection](https://github.com/YooHayoung/TIL).
 
   - [Effective Java](/JAVA/Effective_Java.md)
   - [JAVA](/JAVA/JAVA.md)
+  - [Lambda](/JAVA/Lambda.md)
+  - [Stream](/JAVA/Stream.md)
 
 ### [***Spring***](Spring)
 
