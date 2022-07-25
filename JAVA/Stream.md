@@ -114,6 +114,50 @@ members.stream(). // 1. 데이터 소스를 members 컬렉션으로 지정하고
 
 
 ## 스트림의 메서드 사용법
+### 스트림 생성
+스트림을 생성하기 위해 다음과 같은 방법들을 이용할 수 있다.
+
+```java
+// 컬렉션을 스트림으로 변환하여 반환.
+Stream<Member> memberStream = Arrays.asList(
+                new Member("member1", 10),
+                new Member("member2", 20),
+                new Member("member3", 30)).stream();
+
+// 값을 인수로 받아 스트림을 반환.
+Stream<T> tStream = Stream.of(T... values);
+
+// nullable 객체를 포함한 스트림을 반환.
+Stream<T> tStream = Stream.ofNullable(T t);
+
+// 배열을 스트림으로 반환.
+// 기본형 int, long, double 등의 배열은 IntStream 등의 기본형 특화 스트림으로 반환.
+Stream<T> tStream = Arrays.stream(T[] array);
+
+// 파일의 각 행 요소를 반환하는 스트림.
+Stream<String> stringStream = Files.lines(Path path);
+
+// 함수로 무한 스트림 만들기 : Stream.iterate
+// seed는 초기값, f는 다음 값을 생성하기 위한 함수형 인터페이스를 인수로 받는다.
+// 이전 값을 활용하여 다음 값을 생성한다.
+// 보통 무한한 값을 출력하지 않도록 limit() 메서드를 함께 연결해서 사용한다.
+Stream<T> tStream = 
+    iterate(T seed, UnaryOperator<T> f);
+
+// 두번째 인수로 Predicate를 받는 iterate.
+// Predicate는 언제까지 작업을 수행할 것인지를 기준으로 사용한다.
+Stream<T> tStream = 
+    Stream.iterate(T seed, Predicate<? super T> hasNext, UnaryOperator<T> next);
+
+// 함수로 무한 스트림 만들기 : Stream.generate
+// Supplier를 인수로 받아서 새로운 값을 생산한다.
+// Stream.iterate와 다르게 이전 값을 활용하지 않는다.
+// 보통 무한한 값을 출력하지 않도록 limit() 메서드를 함께 연결해서 사용한다.
+Stream<T> tStream = 
+    Stream.generate(Supplier<? extends T> s);
+```
+
+이 외에 [기본형 특화 스트림](#기본형-특화-스트림)을 생성할 수도 있다.
 
 ### 필터링
 스트림 인터페이스는 필터링을 위해 `filter` 메서드와 `distinct` 메서드를 지원한다.
@@ -283,5 +327,14 @@ System.out.println(average.getAsDouble());
 System.out.println(average.orElse(0));
 ```
 
-#### 5.7.2 숫자 범위
-...여기부터 시작...
+`IntStream`과 `LongStream`은 특정 범위의 숫자 스트림을 생성하여 반환하는 `range`와 `rangeClosed` 메서드를 제공한다. 두 메서드는 모두 첫 번째 인수로 시작값, 두 번째 인수로 종료값을 갖는다. `range`는 시작값과 종료값이 결과에 포함되지 않고, `rangeClosed`는 결과에 포함된다.
+
+```java
+// 2 ~ 99의 숫자 스트림이 생성된다.
+IntStream intStream1 = IntStream.range(1, 100);
+
+// 1 ~ 100의 숫자 스트림이 생성된다.
+IntStream intStream1 = IntStream.rangeClosed(1, 100);
+```
+
+
