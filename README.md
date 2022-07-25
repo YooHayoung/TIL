@@ -15,8 +15,8 @@ Yoo Hayoung's [TIL collection](https://github.com/YooHayoung/TIL).
 ### [***JAVA***](JAVA)
 
   - [Effective Java](/JAVA/Effective_Java.md)
-  - [JAVA](/JAVA/JAVA.md)
   - [Lambda](/JAVA/Lambda.md)
+  - [Optional](/JAVA/Optional.md)
   - [Stream](/JAVA/Stream.md)
 
 ### [***Spring***](Spring)
