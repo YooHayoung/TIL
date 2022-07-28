@@ -1,9 +1,13 @@
 # Validation
 
 [1. BindingResult](#bindingresult)
+
 [2. Validator : Interface](#validator--interface)
+
 [3. Thymeleaf : BindingResult 사용](#thymeleaf--bindingresult-사용)
+
 [4. Bean Validation](#bean-validation)
+ㄴ
 [5. API 검증](#api-검증)
 
 ---
