@@ -2,16 +2,139 @@
 컨트롤러의 역할은 HTTP 요청이 정상인지 검증하는 것이다. 따라서 검증 로직을 잘 개발해야한다.
 
 HTTP 요청은 클라이언트에서 검증할 수 있고 서버에서도 검증할 수 있다. 클라이언트 검증은 자바스크립트를 통해 프론트 단에서 요청을 보내기 전에 검증하는 것이고 서버 검증은 자바 스프링 등을 통해 서버에서 전송받은 요청을 백 단에서 검증한다.
-클라이언트 검증은 조작할 수 있기 때문에 보안에 취약하다. 서버만으로 검증하게 되면 즉각적인 고객 사용성이 부족해진다. 따라서 이 둘을 적절히 잘 섞어서 사용해야 하며 최종적으로 서버 검증은 필수이다. API 방식을 사용하면 API 스펙을 잘 정의하여 검증 오류를 API 응답 결과에 잘 남겨주도록 한다.
 
-- `BindingResult` 객체는 스프링이 제공하는 검증 오류를 보관하는 객체로 검증 오류가 발생하면 여기에 보관한다. 이게 있으면 `@ModelAttribute`에 데이터 바인딩 시 오류가 발생해도 `BindingResult`에 오류정보를 담아서 컨트롤러를 정상적으로 호출한다.
-- `BindingResult`에 검증 오류를 적용하는 방법은 3가지가 있다.
-	1. `@ModelAttribute`의 객체에 타입오류 등으로 바인딩이 실패하면 스프링이 `FieldError`를 생성해서 넣어준다.
-	2. 개발자가 직접 넣어주는 방법
-	3. `Validator`를 사용하는 방법
+클라이언트 검증은 조작할 수 있기 때문에 보안에 취약하다. 서버만으로 검증하게 되면 즉각적인 고객 사용성이 부족해진다. 따라서 이 둘을 적절히 잘 섞어서 사용해야 하며 최종적으로 서버 검증은 필수이다. API 방식을 사용하면 API 스펙을 잘 정의하여 검증 오류를 API 응답 결과에 잘 남겨주도록 해야한다.
 
-아래 코드들은 1, 2번에 해당한다. 
-`src/main/resources/errors.properties`
+화면에서 전달받은 데이터를 검증하고, 검증에 성공하면 로직이 정상 수행, 검증에 실패하면 어떤 데이터가 검증에 실패하였는지, 왜 실패하였는지, 사용자가 입력하여 전송한 데이터가 어떤 데이터인지(사용자가 입력한 데이터를 다시 화면에 출력시켜줘야 더 좋은 사용자 경험을 얻을 수 있다.) 알아야 한다.
+
+이를 위해 스프링은 `BindingResult`를 제공하여 검증 오류를 보관할 수 있도록 돕는다.
+
+## BindingResult
+`BindingResult` 객체는 스프링이 제공하는 것으로, 검증 오류를 보관하는 객체이다. 검증 과정에서 오류가 발생하면 그 오류가 발생한 필드와 오류에 대한 메시지를 담을 수 있다.
+
+`BindingResult`에 검증 오류를 담으려면 `addError` 메서드를 이용하여 특정 필드나, 객체에 대한 오류를 생성하여 담으면 된다.
+특정 필드에 대한 오류는 `FieldError` 객체를 생성, 특정 필드를 넘어서는 오류(객체에 대한 오류)는 `ObjectError` 객체를 생성하고, `BindingResult`의 `addError` 메서드를 통해 추가하면 된다.
+
+`FieldError`와 `ObjectError`는 두가지 생성자를 갖는다. 아래 생성자에서 각 파라미터가 의미하는 것은 다음과 같다.
+
+- `objectName` : 검증 오류가 발생한 객체명
+- `field` : 오류가 발생한 객체의 필드명
+- `rejectedValue` : 사용자가 입력한 검증 실패한 값. 검증 오류가 발생하면, 이를 통해 사용자가 입력한 값을 화면에 다시 출력할 수 있다.
+- `bindingFailure` : 바인딩 실패(타입 오류)이면 `true`, 검증 실패이면 `false`
+- `codes` : `messages.properties`에서 가져올 오류 메시지 코드
+- `arguments` : 오류 메시지 코드를 통해 가져온 메시지에서 사용할 인자
+- `defaultMessage` : `codes`를 통해 가져온 메시지가 없을 때 사용할 기본 오류 메시지
+
+```java
+// FieldError
+public class FieldError extends ObjectError {
+
+	public FieldError(String objectName, String field, String defaultMessage) { ... }
+
+	public FieldError(String objectName, String field, 
+		@Nullable Object rejectedValue, boolean bindingFailure, 
+		@Nullable String[] codes, @Nullable Object[] arguments, 
+		@Nullable String defaultMessage) { ... }
+}
+
+// ObjectError
+public class ObjectError extends DefaultMessageSourceResolvable {
+
+	public ObjectError(String objectName, String defaultMessage) { ... }
+
+	public ObjectError(String objectName, @Nullable String[] codes,
+		@Nullable Object[] arguments, @Nullable String defaultMessage) { ... }
+}
+```
+
+다음과 같이 사용하여 `BindingResult`에 검증 오류 정보를 담을 수 있다.
+
+```java
+// 특정 필드 오류 - FieldError
+// member 객체의 nickname 필드를 입력하지 않으면 검증 실패.
+// 검증에 실패하면 BindingResult에 정보를 담는다.
+if (!StringUtils.hasText(member.getNickname())) {
+	bindingResult.addError(
+		new FieldError("member", "nickname", "닉네임을 입력하세요."));
+}
+
+// 오류 메시지를 meessages.properties에서 찾는다.
+// required.member.nickname 코드의 메시지를 가져온다.
+// rejectedValue에 member.getNickname()을 통해 거절된 값을 담는다.
+// 기존 화면에서 사용자가 입력한 값을 다시 출력시킬 수 있다.
+if (!StringUtils.hasText(member.getNickname())) {
+	bindingResult.addError(
+		new FieldError("member", "nickname", member.getNickname(),
+			false, new String[]{"required.member.nickname"}, null, null)
+	);
+}
+
+// 객체 오류 - ObjectError
+// 특정 필드를 넘어서는 오류는 ObjectError를 생성하여 BindingResult에 담는다.
+if (member.getLoginId().equals(member.getPassword())) {
+	bindingResult.addError(
+		new ObjectError("member", "로그인 이메일과 비밀번호가 일치하면 안됩니다."));
+}
+
+// 오류 메시지를 meessages.properties에서 찾는다.
+// notEqualsIdAndPassword 코드의 메시지를 가져온다.
+if (member.getLoginId().equals(member.getPassword())) {
+	bindingResult.addError(
+		new ObjectError("member", 
+			new String[]{"notEqualsIdAndPassword"}, null, null)
+	);
+}
+```
+
+`BindingResult`의 `rejectValue`, `reject` 메서드를 사용하면 `FieldError`와 `ObjectError`를 직접 생성하지 않고도 검증 오류를 담을 수 있다. 
+`reject`와 `rejectValue` 메서드는 `errorCode`를 인자로 받는다. 여기서 `errorCode`는 `messages.properties`에 등록된 코드가 아니라 `messageResolver`를 위한 오류 코드이다. 내부에서 `FieldError`, `ObejctError`를 생성하고, `messageResolver`가 자동으로 오류 코드들을 생성한다. 다음과 같은 규칙으로 오류 코드를 자동으로 생성하고, `messages.properties`에서 순위에 따라 일치하는 것을 뽑아 사용한다.
+
+- FieldError : `rejectValue`
+  1. `errorCode.objectName.fieldName`
+  2. `errorCode.fieldName`
+  3. `errorCode.java.lang.type`
+  4. `errorCode`
+
+- ObjectError : `reject`
+    1. `errorCode.objectName`
+    2. `errorCode`
+
+> 스프링은 검증시, 타입 오류가 발생하면 `typeMismatch`라는 오류 코드를 사용한다.
+
+```java
+// 특정 필드 오류 - rejectValue
+if (!StringUtils.hasText(member.getNickname())) {
+	// required라는 오류코드로 메시지를 찾는다.
+	// 1. required.member.nickname
+	// 2. required.nickname
+	// 3. required.java.lang.String
+	// 4. required
+	// 위와 같은 순서로 일치하는 메시지를 찾는다.
+	bindingResult.rejectValue("nickname", "required");
+}
+
+if (!StringUtils.hasText(member.getNickname())) {
+	bindingResult.rejectValue("nickname", "required", 
+		new Object[]{"arg1", "arg2"}, "default message");
+}
+
+// 객체 오류 - reject
+if (member.getLoginId().equals(member.getPassword())) {
+	// noEqualsIdAndPassword라는 오류코드로 메시지를 찾는다.
+	// 1. notEqualsIdAndPassword.member
+	// 2. notEqualsIdAndPassword
+	// 위와 같은 순서로 일치하는 메시지를 찾는다.
+	bindingResult.reject("notEqualsIdAndPassword");
+}
+
+if (member.getLoginId().equals(member.getPassword())) {
+	bindingResult.reject("notEqaulsIdAndPassword", 
+		new Object[]{"arg1, arg2"}, "default message");
+}
+```
+
+아래는 `messages.properties`의 예시이다. `BindingResult`에 오류 코드를 넘기면 여기서 메시지를 찾아 사용한다.
+
 ```properties
 #---ObjectError---
 #Level1
@@ -30,122 +153,127 @@ errorCode.fieldName=ErrorMessage
 
 #Level3
 errorCode.java.lang.String=ErrorMessage
-# 스프링은 타입 오류가 발생하면 typeMismatch 라는 오류코드를 사용
+# 스프링은 타입 오류가 발생하면 typeMismatch 라는 오류코드를 사용한다.
 typeMismatch.java.lang.Integer=숫자를 입력하세요.
 
 #Level4
 errorCode=ErrorMessage
 ```
-- 오류 메시지 파일. `BindingResult`에서 메시지 코드를 넘기면 여기서 찾아 사용한다.
+> 스프링은 검증시, 타입 오류가 발생하면 `typeMismatch`라는 오류 코드를 사용한다.
 
-`controller`
+
+## Validator : Interface
+컨트롤러에서 `BindingResult`를 사용하여 검증하는 로직을 별도로 분리하여 사용할 수 있다. `Validator` 인터페이스를 구현한 클래스를 만들고, 이를 스프링 빈으로 등록하여 사용하면 된다.
+
+`Validator` 인터페이스의 `supports` 메서드는 구현한 검증기가 어떤 클래스의 객체를 검증할 수 있는지 확인하는 로직을 구현한다.
+
 ```java
-
-private final ItemValidator itemValidator;
-
-@InitBinder
-public void init(WebDataBinder dataBinder) {
-	// 검증기 자동으로 적용.
-	dataBinder.addValidators(itemValidator);
-}
-
-@PostMapping // @Validated @Valid 둘다 사용 가능.
-public String controllerMethod(@Validated @ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-
-	// 검증
-	// itemValidator.validate(item, bindingResult);
-	// WebDataBinder에 검증기를 추가하면 해당 컨트롤러에서는 검증기를 자동으로 적용 가능. 글로벌 설정은 별도.
-
-	// 에러 존재하면 에러 메시지와 함께 현재 페이지로 다시 보낸다.
-	if (bindingResult.hasErrors()) {
-		return "보낼 위치";
-	}
-
-	// 성공 로직
-	// ...
+// 이 검증기는 Member 클래스의 객체를 검증할 수 있다.
+@Override
+public boolean supports(Class<?> clazz) {
+	return Member.class.isAssignableFrom(clazz);
 }
 ```
 
-`ObjectValidator`
+`Validator` 인터페이스의 `validate` 메서드는 해당 검증기의 로직을 구현한다. 어떤 필드를 검증할 지, 어떤 로직으로 검증할 지를 구현한다. 컨트롤러에서는 `BindingResult` 객체의 `reject`, `rejectValue` 또는 `addError` 메서드를 통해 `FieldError`, `ObjectError`를 직접 생성하여 에러를 추가하다. `Validator`의 `validate` 메서드에서는 `Errors` 파라미터를 통해 `reject`, `rejectValue`, `addError`를 사용할 수 있다.
+
 ```java
-@Component // 스프링 빈으로 등록.
-public class ItemValidator implements Validator {
-	
-	// 해당 검증기를 지원하는지 여부 확인.
-	@Override
-	public boolean supports(Class<?> clazz) {
-		return 검증대상클래스.class.isAssignableFrom(clazz);
+@Override
+public void validate(Object target, Errors errors) {
+	Member member = (Member) target;
+
+	if (!StringUtils.hasText(member.getNickname())) {
+		errors.rejectValue("nickname", "required", 
+			new Object[]{"arg1", "arg2"}, "default message");
 	}
-	
-	// 검증. 파라미터로 검증 대상 객체와 BindingResult를 받는다.
-	@Override
-	public void validate(Object target, Errors errors) {
-		검증할객체클래스 objectName = (검증할객체클래스) target;
 
-		// 특정 필드 예외.
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "itemName", "errorCode"); // empty와 공백 같은 단순한 기능만 제공한다.
-		
-		// 위의 코드를 풀면 다음과 같다.
-		if (!StringUtils.hasText(item.getItemName())) {
-			// errors.addError(new FieldError("objectName", "fieldName", item.getName(), false, new String[]{"xxx.objectName.fieldName"}, new Object[]{123, 1234},  "defaultMessage"));
-			// new FieldError(objectName, field, rejectedValue, bindingFailure, codes, arguments, defaultMessage)
-			// 파라미터 설명(오류발생 객체명, 오류필드, 사용자가 입력한 값-다시 페이지에 띄워줄거, 바인딩실패(타입오류 등)여부, 메시지 코드, 메시지에서 사용하는 인자, 기본 오류 메시지)
-		
-			errors("fieldName", "xxx", new Object[]{123, 1234}, "defaultMessage");
-			// 위와 동일하게 동작하는 코드
-			// errors.rejectValue(오류필드명 ,messageResolver를 위한 오류 코드, 오류 메시지에서 사용하는 인자, 기본 오류 메시지);
-		}
-
-		// 전체 예외.
-		if (조건) {
-			// errors.addError(new ObjectError("item", null, null ,"defaultMessage"));
-			errors.reject("xxxx", new Object[]{12345}, "defaultMessage");
-			// 위와 동일하게 동작하는 코드
-			// errors.reject(messageResolver를 위한 오류 코드, 오류 메시지에서 사용하는 인자, 기본 오류 메시지)
-		}
+	if (member.getLoginId().equals(member.getPassword())) {
+		errors.reject("notEqaulsIdAndPassword", 
+			new Object[]{"arg1, arg2"}, "default message");
 	}
 }
 ```
-- `FieldError`를 직접 다루는 방법
-	- 특정 필드에 오류가 있으면 `FieldError` 객체를 생성하여 bindingResult에 담는다.
-	- 특정 필드를 넘어서는 오류는 `ObjectError` 객체를 생성하여 bindingResult에 담는다.
-	- 메시지 코드는 하나가 아니라 배열로 여러 값을 전달할 수 있는데, 순서대로 매칭해서 처음 매칭되는 메시지를 사용한다.
-- `BindingResult.rejectValue`를 통해 오류 코드를 다루는 방법🌟
-	- `BindingResult`는 어떤 객체를 대상으로 검증하는지 target을 이미 알고 있기 때문에 필드명 만으로도 오류 메시지를 넣어줄 수 있다.
-	- `MessageCodesResolver`를 통해 오류 메시지를 다룬다.
-	- `MessageCodesResolver`는 검증 오류 코드로 메시지 코드들을 생성한다. 인터페이스이기 때문에 구현체가 필요 -> 기본 구현체는 `DefaultMessageCodesResolver`
-	- **기본 메시지 생성 규칙**은 아래로..
 
-`thymeleaf`
+위와 같이 구현한 검증기는 컨트롤러에서 직접 호출하여 검증하게 할 수도 있고, `WebDataBinder`를 통하여 자동으로 검증하게 할 수도 있다.
+
+- 컨트롤러에서 직접 호출
+```java
+@Controller
+@RequiredArgsConstructor
+public class MemberController {
+
+	// 검증기 주입
+	private final MemberValidator memberValidator;
+
+	@PostMapping
+	public String controllerMethod(
+			@ModelAttribute Member member, 
+			BindingResult bindingResult) {
+		
+		// 검증기 동작. 검증에 실패하면 BindingResult에 담아준다.
+		memberValidator.validate(member, bindingResult);
+
+		if (bindingResult.hasErrors()) {
+			return "오류 발생시 돌려보낼 페이지";
+		}
+
+		// 정상 로직.
+	}
+}
+```
+
+- `WebDataBinder`를 통해 검증기 호출과정 생략 가능
+```java
+@Controller
+@RequiredArgsConstructor
+public class MemberController {
+
+	// 검증기 주입
+	private final MemberValidator memberValidator;
+
+	@InitBinder
+	public void init(WebDataBinder dataBinder) {
+		// WebDataBinder는 파라미터 바인딩 역할을 해준다. 검증기능도 내부에 포함한다.
+		dataBinder.addValidators(memberValidator);
+	}
+
+	@PostMapping
+	public String controllerMethod(
+			// @Validated는 검증기를 실행하라는 애노테이션.
+			// WebDataBinder에 등록한 검증기를 찾아서 실행한다.
+			@Validated @ModelAttribute Member member, 
+			BindingResult bindingResult) {
+
+		if (bindingResult.hasErrors()) {
+			return "오류 발생시 돌려보낼 페이지";
+		}
+
+		// 정상 로직.
+	}
+}
+```
+> `BindingResult`는 검증할 대상 다음에 와야 한다.
+
+> `WebMvcConfigurer`의 `getValidator`를 구현하여 전체 컨트롤러에 해당 검증기를 적용하게 할 수 있다.
+
+
+## Thymeleaf : BindingResult 사용
+타임리프에서는 다음과 같이 `th:errors`, `th:field`를 통해 `BindingResult`에 담긴 정보를 사용할 수 있다.
+
 ```html
-...
 <div th:if="${#fields.hasGlobalErrors()}">
 	<span class="field-error" th:each="err : ${#fields.globalErrors()}">글로벌 오류 메시지</span>
 </div>
 
 <div th:field="*{객체의 필드명}" th:errorclass="field-error">
-	필드에 에러 발생시 errorclass에 입력한 class이름을 추가한다.
-	th:field는 정상 상황에서는 모델 객체의 값을 사용. 오류가 발생하면 FieldError에서 보관한 값을 사용한다.
+	*   필드에 에러 발생시 `th:errorclass`에 입력한 class 이름을 추가한다.
+	*   `th:field`는 정상 상황에서는 모델 객체의 값을 사용한다. 
+	**  오류가 발생하면 `FieldError`에서 보관한 값을 사용한다.
 </div>
 <div class="field-error" th:errors="*{객체의 필드명}">
-	지정한 객체의 필드에 오류가 있으면 출력
+	*   `th:errors`는 지정한 객체의 필드에 오류가 있으면 출력한다.
 </div>
-...
 ```
-- 타임리프에서 에러를 위와 같이 처리할 수 있다.
-
-
-### DefaulteMessageCodesResolver의 기본 메시지 생성 규칙
-
-객체 오류의 경우 다음 순서로 2가지를 생성한다
-> 1 -> code + “.” + objectName
-> 2 -> code
-
-필드 오류의 경우 다음 순서로 4가지 메시지 코드 생성한다
-> 1 -> code.objectName.fieldName
-> 2 -> code.fieldName
-> 3 -> code.fieldType
-> 4 -> code
 
 
 
@@ -235,6 +363,7 @@ public void init(WebDataBinder dataBinder) {
 ```
 
 
+
 ### API 방식
 `@RequestBody`에도 `@Validated` 적용 가능하다.
 ```java
@@ -254,10 +383,3 @@ API 경우 3가지 경우를 나누어 생각해야 한다.
 
 `HttpMessageConverter` 단계에서 실패하면 예외가 발생한다. -> 예외 처리 필요
 
-
-#스프링 MVC/Validation#
-#스프링 MVC/Validation/errorMessage#
-#스프링 MVC/Validation/BindingResult#
-#스프링 MVC/Validation/BeanValidation#
----
-해당 내용은 김영한님의 강의를 듣고 정리한 내용입니다.
