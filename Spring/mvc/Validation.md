@@ -1,4 +1,13 @@
 # Validation
+
+[1. BindingResult](#bindingresult)
+[2. Validator : Interface](#validator--interface)
+[3. Thymeleaf : BindingResult 사용](#thymeleaf--bindingresult-사용)
+[4. Bean Validation](#bean-validation)
+[5. API 검증](#api-검증)
+
+---
+
 컨트롤러의 역할은 HTTP 요청이 정상인지 검증하는 것이다. 따라서 검증 로직을 잘 개발해야한다.
 
 HTTP 요청은 클라이언트에서 검증할 수 있고 서버에서도 검증할 수 있다. 클라이언트 검증은 자바스크립트를 통해 프론트 단에서 요청을 보내기 전에 검증하는 것이고 서버 검증은 자바 스프링 등을 통해 서버에서 전송받은 요청을 백 단에서 검증한다.
@@ -86,9 +95,11 @@ if (member.getLoginId().equals(member.getPassword())) {
 }
 ```
 
+### reject, rejectValue
 `BindingResult`의 `rejectValue`, `reject` 메서드를 사용하면 `FieldError`와 `ObjectError`를 직접 생성하지 않고도 검증 오류를 담을 수 있다. 
-`reject`와 `rejectValue` 메서드는 `errorCode`를 인자로 받는다. 여기서 `errorCode`는 `messages.properties`에 등록된 코드가 아니라 `messageResolver`를 위한 오류 코드이다. 내부에서 `FieldError`, `ObejctError`를 생성하고, `messageResolver`가 자동으로 오류 코드들을 생성한다. 다음과 같은 규칙으로 오류 코드를 자동으로 생성하고, `messages.properties`에서 순위에 따라 일치하는 것을 뽑아 사용한다.
+`reject`와 `rejectValue` 메서드는 `errorCode`를 인자로 받는다. 여기서 `errorCode`는 `messages.properties`에 등록된 코드가 아니라 `MessageCodesResolver`를 위한 오류 코드이다. 내부에서 `FieldError`, `ObejctError`를 생성하고, `MessageCodesResolver`가 자동으로 `errorCode`를 바탕으로 오류 코드들을 생성한다. `MessageCodesResolver`는 다음과 같은 규칙으로 오류 코드를 자동 생성하고, `messages.properties`에서 순위에 따라 일치하는 것을 뽑아 사용한다.
 
+#### MessageCodesResolver가 자등으로 생성하는 오류 코드
 - FieldError : `rejectValue`
   1. `errorCode.objectName.fieldName`
   2. `errorCode.fieldName`
@@ -275,111 +286,49 @@ public class MemberController {
 </div>
 ```
 
-
-
----
 ## Bean Validation
-- 공식 사이트: http://hibernate.org/validator/
-- 공식 메뉴얼: https://docs.jboss.org/hibernate/validator/6.2/reference/en-US/html_single/ 
-- 검증 애노테이션 모음 : https://docs.jboss.org/hibernate/validator/6.2/reference/en-US/html_single/#validator-defineconstraints-spec 
+`Bean Validation`은 애노테이션을 통하여 검증 로직을 편리하게 적용할 수 있도록 공통화하고 표준화 한 것이다. `Bean Validation`은 특정한 구현체가 아닌 Bean Validation 2.0(JSR-380)이라는 기술 표준으로 검증 애노테이션과 여러 인터페이스의 모음을 말한다. 이를 구현한 기술중에 일반적으로 사용하는 구현체는 Hibernate Validator이다.
 
-`Bean Validation`은 검증 로직을 모든 프로젝트에 적용할 수 있도록 공통화, 표준화 한 것. 애노테이션 하나로 검증 로직을 매우 편리하게 적용할 수 있다.
-`Bean Validation`은 특정한 구현체가 아닌 Bean Validation 2.0(JSR-380)이라는 기술 표준으로 검증 애노테이션과 여러 인터페이스의 모음이다. 이를 구현한 기술중에 일반적으로 사용하는 구현체는 하이버네이트 Validator이다.
+- Hibernate Validator
+  - 공식 사이트: http://hibernate.org/validator/
+  - 공식 메뉴얼: https://docs.jboss.org/hibernate/validator/6.2/reference/en-US/html_single/ 
+  - 검증 애노테이션 모음 : https://docs.jboss.org/hibernate/validator/6.2/reference/en-US/html_single/#validator-defineconstraints-spec 
 
-이를 사용하기 위해서는 의존관계 추가 필요
-```
-implementation ‘org.springframework.boot:spring-boot-starter-validation
-```
-`jakarta.validation-api` : Bean Validation 인터페이스
-`hibernate-validator` : 구현체
+`Bean Validation`을 사용하기 위해서는 `spring-boot-starter-validation` 의존 관계를 추가해야 한다.
 
-### 필드에러
-다음과 같은 애노테이션을 검증 대상 필드에 붙임으로써 검증을 수행할 수 있다.
-```java
-@NotBlank
-@NotNull
-@Range(min = 100, max = 10000)
-@Max(9999)
+```gradle
+implementation 'org.springframework.boot:spring-boot-starter-validation'
 ```
 
-스프링 부트가 `spring-boot-starter-validation`라이브러리를 넣으면 자동으로 Bean Validator를 인지하고 스프링에 통합한다. 따라서 스프링 MVC는 Bean Validator를 사용할 수 있다. 스프링 부트는 자동으로 `LocalValidatorFactoryBean`을 글로벌 Validator로 등록한다. 이는 `@NotNull`과 같은 애노테이션을 보고 검증을 수행한다. 검증 오류가 발생하면 이 Validator가 `FieldError`와 `ObjectError`를 생성해서 `BindingResult`에 담아주는 것이다.
-이 때, 검증 순서는 다음과 같다.
-1. `@ModelAttribute` 각각의 필드에 타입 변환을 시도하고
-2. 성공하면 Validator를 적용한다.
-3. 실패하면 `typeMismatch`로 `FieldError`를 추가한다. -> 이 때, 바인딩에 실패한 필드는 BeanValidation을 적용하지 않는다.
+위 의존 관계를 추가하면 스프링 부트는 `LocalValidatorFactoryBean`을 글로벌 Validator로 등록한다. 이 검증기는 `@Validated`와 `@Valid` 애노테이션이 붙은 클래스의 `@NotBlank` 등과 같은 검증 애노테이션을 확인하고 검증을 수행한다. 검증 과정에서 오류가 발생하면 `FiledError`와 `ObjectError`를 생성하여 `BindingResult`에 담는다.
 
-Bean Validation을 적용하면 오류 코드가 애노테이션 이름으로 등록된다. 따라서 `errors.properties`에 다음과 같이 메시지를 등록하면 오류 메시지를 적용할 수 있다.
-```properties
-# 애노테이션이름.대상객체명.필드명=오류메시지
-# 애노테이션이름.필드명=오류메시지
-# 애노테이션이름.java.lang.String=오류메시지
-# 애노테이션이름
-# {0}은 필드명, {1}, {2} 등은 애노테이션마다 다르다.
+이 때, 검증 필드 오류(`FieldError`)가 발생하면 `MessageCodesResolver`는 애너테이션 이름을 기반으로 오류 코드들을 생성하고, `messages.properties`에서 메시지를 찾아서 사용한다. `MessageCodesResolver`가 오류 코드들을 생성하는 규칙은 [여기](#messagecodesresolver가-자등으로-생성하는-오류-코드)서 확인할 수 있다. 일치하는 메시지가 없다면 애노테이션의 `message` 속성으로 전달된 값을 사용하고, 이 마저 없다면 `validation` 라이브러리가 기본으로 제공하는 값을 사용한다.
 
-NotBlank.item.itemName={0}, 상품 이름을 입력하세요. 
-NotBlank.itemName=이름을 입력하세요.
-Range.java.lang.Integer=...
-Range={2} ~ {1}
-```
-또는 애노테이션에서 message 속성을 사용하여 오류 메시지를 입력한다.
-```java
-@NotBlank(message = "공백 허용 안함")
-private String itemName;
-```
+`Bean Validation`을 통해 검증할 때, `ObjectError`가 발생하는 경우는 `@ScriptAssert`를 사용하거나 해당 부분만 직접 작성하는 방법을 사용할 수 있다. 하지만 `@ScriptAssert`는 제약이 많고 복잡하며, 검증 기능이 해당 객체의 범위를 넘어서는 경우도 종종 등장하고 대응이 어렵기 때문에 잘 사용하지 않는다. 따라서 `ObjectError` 관련 부분만 코드로 직접 작성하는 것이 좋다.
 
-Bean Validation이 메시지를 찾는 순서는
-1. 생성된 메시지 코드 순서대로 messageSource에서 찾는다.
-2. 애노테이션의 `message` 속성을 사용한다.
-3. 라이브러리의 기본 제공값을 사용한다.
+#### 검증 대상 선택
+또한 `Bean Validation`은 `groups` 기능을 통해 검증 대상의 특정 필드를 선택하여 검증할 수 있도록 지원한다. 방법은 다음과 같다.
 
-### 오브젝트 에러
-`@ScriptAssert()`가 있는데 이는 제약이 많고 복잡하고, 검증 기능이 해당 객체의 범위를 넘어서는 경우도 종종 등장하고 대응이 어렵기 때문에 잘 사용하지 않는다.
-따라서 오브젝트 오류 관련 부분만 코드로 직접 작성하는 것이 낫다. -> 컨트롤러가 아니라 따로 빼서 관리하면 좋을 듯 하다.
+- `SaveCheck`, `UpdateCheck` 등과 같은 빈 인터페이스를 만든다.
+- 이를 BeanValidation 애노테이션에 `(groups = {SaveCheck.class, UpdateCheck.class})`와 같이 적용할 그룹을 속성으로 넘겨준다.
+- Controller에서 `@Validated(SaveCheck.class)`와 같이 어떤 그룹에 검증을 진행할 지 선택한다.
 
+하지만 `groups` 기능은 컨트롤러로 전달되는 데이터와 이를 바인딩받는 객체가 일치하지 않기 때문에 잘 사용하지 않는다. 따라서 해당 기능을 이용하기보다는 데이터를 주고받는 DTO 객체를 따로 만들어서 여기에 `Bean Validation`을 적용하고, 검증에 성공하면 이를 `Entity` 등으로 변환하여 사용하는 것이 더 좋은 선택이다.
 
-### 적용
-Bean Validation을 Entity에 적용하면 Form 또는 Dto에 대해 등록, 수정 과정에 대해 나누어 검증할 수 없다. 두 상황 모두에 Bean Validation이 동작하기 때문이다. 이를 해결하기 위한 방법은 두가지가 있다.
-- BeanValidation의 groups 기능을 사용.
-	- `SaveCheck`, `UpdateCheck` 등과 같은 빈 인터페이스를 만든다.
-	- 이를 BeanValidation 애노테이션에 `(groups = {SaveCheck.class, UpdateCheck.class})`와 같이 적용할 그룹을 속성으로 넘겨준다.
-	- Controller에서 `@Validated(SaveCheck.class)`처럼 그룹을 적용한다.
-- 객체를 직접 사용하지 않고 SaveForm, UpdateForm 등 Form, Dto 전송을 위한 별도의 모델 객체를 만들어 사용한다.
-	- 전송을 위한 Form or Dto를 만들고 여기에 BeanValidation 애노테이션을 적용
-	- Controller에서 Entity 객체가 아닌 BeanValidation을 적용한 전송용 객체 바인딩
-		- `@ModelAttribute("이름")`을 적용하여 모델에 넣을 때, 이름 지정 가능
-	- 해당 객체를 Entity 객체로 변환하여 작업 수행.
+## API 검증
+`@Valid`와 `@Validated`는 `@RequestBody`에도 적용할 수 있다. `@RequestBody`는 `HttpMessageConverter`를 통하여 JSON 데이터를 객체로 바인딩해주는 역할을 한다.
 
--> 별도의 모델 객체를 만들어 사용하고 여기에 검증을 하는 것이 좋다. 전송하는 폼 데이터가 복잡해도 이에 맞춘 별도의 폼 객체를 사용해서 데이터를 전달을 수 있다. 검증이 중복되지 않는다. 
-
-Bean Validation을 이용하면 `Validator`를 구현한 `ObjectValidator`를 할 필요가 없다 -> 오류 검증기가 중복 적용된다.
-```java
-// 아래 코드가 있다면 제거
-private final ItemValidator itemValidator;
-
-@InitBinder
-public void init(WebDataBinder dataBinder) {
-	dataBinder.addValidators(itemValidator);
-}
-```
-
-
-
-### API 방식
-`@RequestBody`에도 `@Validated` 적용 가능하다.
 ```java
 @PostMapping
-public Object method(@RequestBody @Validated ItemSaveDto itemSaveDto, BindingResult bindingResult) {
-	...
-}
+public Object contollerMethod(
+	@RequestBody @Validated MemberSaveRequestDto requestDto,
+	BindingResult bindingResult) { ... }
 ```
 
-API 경우 3가지 경우를 나누어 생각해야 한다.
-- 성공 요청 : 성공
-- 실패 요청 : JSON을 객체로 생성하는 것 자체가 실패(타입오류 등) -> 컨트롤러 자체가 호출되지 않는다. 검증 불가능. 검증은 컨트롤러가 호출 되야 수행된다.
-- 검증 오류 요청 : JSON을 객체로 생성하는 것은 성공, 검증 실패
+`HttpMessageConveret`가 JSON 데이터를 객체로 바인딩에 성공하여 컨트롤러로 넘어오면, `Validator`가 동작하여 객체를 검증한다. 검증에 실패하게 되면 API 응답으로 검증에 실패하여 로직을 수행하지 못하였다는 사실을 알려야 한다. `BindingResult`에는 검증 실패에 대한 모든 정보가 담겨있다. 이를 그대로 반환하는 것은 너무 과하므로, 검증에 실패하면 `BindingResult`에서 필요한 데이터만 선택하여 API 스펙에 맞게 반환하도록 하는 것이 좋다.
 
-- `@ModelAttribute`는 필드 단위로 정교하게 바인딩이 적용된다. 특정 필드가 바인딩 되지 않아도 나머지 필드는 정상 바인딩 되고, Validator를 사용한 검증도 적용할 수 있다. 
-- `@RequestBody`는 HttpMessageConverter 단계에서 JSON 데이터를 객체로 변경하지 못하면 이후 단계 자체가 진행되지 않고 예외가 발생한다. 컨트롤러도 호출되지 않고, Validator도 적용할 수 없다. 
-
-`HttpMessageConverter` 단계에서 실패하면 예외가 발생한다. -> 예외 처리 필요
-
+> `HttpMessageConverter`가 JSON을 객체로 바인딩 할 때, 타입 오류 때문에 객체에 바인딩하는 것 자체가 실패하면 `@Validated`가 동작하지 않는다.
+> 
+> `@ModelAttribute`는 필드 단위로 정교하게 바인딩이 적용되기 때문에 특정 필드가 바인딩 되지 않아도 나머지 필드는 정상적으로 바인딩 된다. 따라서 `Validator`를 사용한 검증도 적용이 가능하다.
+> 
+> 반면 `@RequestBody`는 `HttpMessageConverter`가 동작하여 JSON 데이터를 객체 필드에 바인딩하는 중에 타입 오류로 인하여 바인딩하지 못하면 해당 단계에서 `HttpMessageNotReadableException` 예외가 발생하고, 더 이상 진행하지 않는다. 따라서 컨트롤러도 호출되지 않고 `Validator`도 적용할 수 없다. 이 경우, 예외 처리를 통해 예외 API 응답을 내려주도록 해야 한다.
