@@ -3,7 +3,7 @@
 
 Yoo Hayoung's [TIL collection](https://github.com/YooHayoung/TIL).
 
-*24 TILs and counting...*
+*23 TILs and counting...*
 
 ---
 
@@ -41,7 +41,6 @@ Yoo Hayoung's [TIL collection](https://github.com/YooHayoung/TIL).
 
   - [***mvc***](/Spring/mvc)
 
-    - [API 예외처리](/Spring/mvc/API-예외처리.md)
     - [ArgumentResolver](/Spring/mvc/ArgumentResolver.md)
     - [Thymeleaf](/Spring/mvc/Thymeleaf.md)
     - [Validation](/Spring/mvc/Validation.md)
