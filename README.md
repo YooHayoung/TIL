@@ -3,7 +3,7 @@
 
 Yoo Hayoung's [TIL collection](https://github.com/YooHayoung/TIL).
 
-*23 TILs and counting...*
+*25 TILs and counting...*
 
 ---
 
@@ -47,6 +47,11 @@ Yoo Hayoung's [TIL collection](https://github.com/YooHayoung/TIL).
     - [로그인 처리](/Spring/mvc/로그인-처리.md)
     - [스프링 타입 컨버터](/Spring/mvc/스프링-타입-컨버터.md)
     - [예외 처리](/Spring/mvc/예외-처리.md)
+
+  - [***security***](/Spring/security)
+
+    - [AuthenticationPrincipal](/Spring/security/AuthenticationPrincipal.md)
+    - [Spring security](/Spring/security/Spring-security.md)
 
 ### [***Study***](Study)
 
